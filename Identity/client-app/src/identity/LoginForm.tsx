@@ -3,13 +3,12 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { Button, CircularProgress, Container, TextField, Typography } from "@mui/material";
 import Grid2 from "@mui/material/Unstable_Grid2";
 import { Controller, useForm } from "react-hook-form";
-import { ILogin, Login } from "../../app/models/ilogin";
-import InputTheme from "../../app/themes/InputTheme";
+import { ILogin, Login } from "./ilogin";
+import InputTheme from "./InputTheme";
 import * as Yup from 'yup';
-import HeaderTheme from "../header/headerTheme";
-import { store } from "../../app/stores/store";
+import HeaderTheme from "./headerTheme";
 import { grey } from "@mui/material/colors";
-import { useEffect } from "react";
+import agent from "./identityAgent";
 
 export default function LoginForm() {
     const validSchema = Yup.object().shape({
@@ -21,8 +20,10 @@ export default function LoginForm() {
         resolver: yupResolver(validSchema)
     });
     const onSubmit = handleSubmit(data => {
-        store.identityStore.login(data)
-            .then(() => store.commonStore.navigation!('/'))
+        agent.Identity.login(data)
+            .then((identity) => {
+                window.location.href = process.env.REACT_APP_FRONT! + '/token?token=' + identity.result.token;
+            })
             .catch(error => alert(error));
     });
     const labelStyle = {
@@ -82,13 +83,13 @@ export default function LoginForm() {
                             
                             <Grid2 container direction="row" justifyContent="center">
                                 <Grid2>
-                                    <Button variant="outlined" sx={{ marginRight: "10px" }}
-                                        onClick={() => store.commonStore.navigation!('/')}>
+                                <Button variant="outlined" sx={{ marginRight: "10px" }}
+                                    onClick={() => window.location.href = process.env.REACT_APP_FRONT!}>
                                         Отмена
                                     </Button>
                                     <Button type="submit" variant="outlined"
                                         disabled={false}>
-                                        "Ввод"
+                                        Ввод
                                         {false && (
                                             <CircularProgress
                                                 size={24}

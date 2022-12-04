@@ -39,7 +39,6 @@ const sleep = (delay: number) => {
 }
 
 const getErrorText = (data: any, error: AxiosError) => {
-    debugger;
     let errorText = '';
     let errorData: string[] = [];
     if ((data as any).errors) {
@@ -93,8 +92,15 @@ const Category = {
 const Identity = {
     login: (login: ILogin) => axios.post<ResponseResult<IIdentity>>(process.env.REACT_APP_IDENTITY! +
             '/login', { ...login }).then(responseBody),
-    identity: () => axios.get<ResponseResult<IIdentity>>(process.env.REACT_APP_IDENTITY! +
-        '/CurrentUser').then(responseBody),
+    identity: (token: string) => {
+        const axInstance = axios.create({
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+        return axInstance.get<ResponseResult<IIdentity>>(process.env.REACT_APP_IDENTITY! +
+            '/CurrentUser').then(responseBody);
+    },
     register: (user: IIdentity) => axios.post<ResponseResult<IIdentity>>(process.env.REACT_APP_IDENTITY! +
         '/register', user).then(responseBody),    
     refreshToken: () => axios.post<ResponseResult<IIdentity>>(process.env.REACT_APP_IDENTITY! +

@@ -8,7 +8,7 @@ import ProductForm from '../../features/products/ProductForm';
 import Header from '../../features/header/Header';
 import CategoryMain from '../../features/category/CategoryMain';
 import CategoryAdd from '../../features/category/CategoryAdd';
-import LoginForm from '../../features/identity/LoginForm';
+import GetToken from './getToken';
 
 export default observer(function App() {
     const navigation = useNavigate();
@@ -27,7 +27,7 @@ export default observer(function App() {
               <Route path="/product/:id" element={<ProductForm />}></Route>
               <Route path="/category" element={<CategoryMain />}></Route>
               <Route path="/addCategory" element={<CategoryAdd />}></Route>
-              <Route path="/login" element={<LoginForm />}></Route>
+              <Route path="/token" element={<GetToken />}></Route>
           </Routes>
     </>
   );

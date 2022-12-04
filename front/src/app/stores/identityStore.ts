@@ -1,11 +1,8 @@
-import { makeAutoObservable, runInAction } from "mobx";
+﻿import { makeAutoObservable, runInAction } from "mobx";
 import { NavigateFunction, useNavigate } from "react-router-dom";
-import agent from "../api/agent";
 import { IIdentity } from "../models/identity";
-import { ILogin } from "../models/ilogin";
-//import { IUserFormValues } from "../models/iuserFormValues";
 import { store } from "./store";
-
+import agent from "../api/agent";
 
 
 export default class IdentityStore {
@@ -29,19 +26,6 @@ export default class IdentityStore {
         return this.identity?.isAdmin;
     }
 
-    login = async (formValue: ILogin) => {
-        try {
-            const identity = await agent.Identity.login(formValue);
-            store.commonStore.setToken(identity.result.token);
-            //this.startRefreshTokenTimer(user);
-            runInAction(() => this.identity = identity.result);
-            //store.modalStore.closeModal();
-        } catch (error) {
-            console.log(error);
-            throw error;
-        }
-    }
-
     logout = async () => {
         store.commonStore.setToken(null);
         window.localStorage.removeItem('jwt');
@@ -49,16 +33,15 @@ export default class IdentityStore {
     }
 
     getIdentity = async () => {
-        try {
-            const identity = await agent.Identity.identity();
-            store.commonStore.setToken(identity.result.token);
-            runInAction(() => this.identity = identity.result);
-            return identity.result;
-            //this.startRefreshTokenTimer(user);
-        } catch (error) {
-            console.log(error);
-            return Promise.reject(error);
-        }
+        //обращаемся к сервису аутентификации для проверки токена
+        const token = window.localStorage.getItem('jwt');
+        if (token) {            
+            //получаем полное Identity
+            const identity = await agent.Identity.identity(token);
+            runInAction(() => store.identityStore.identity = identity.result);               
+            return identity.result;           
+        } 
+        return null;
     }
 
     //register = async (formValue: IUserFormValues) => {
@@ -91,7 +74,7 @@ export default class IdentityStore {
     //private startRefreshTokenTimer(user: IUser) {
     //    const token = JSON.parse(atob(user.token.split('.')[1]));
     //    const expires = new Date(token.exp * 1000);
-    //    const timeOut = expires.getTime() - Date.now() - (30 * 1000); //������ ��������� ����� �� 30 ������ �� ��� ���������
+    //    const timeOut = expires.getTime() - Date.now() - (30 * 1000); //начать обновлять токен за 30 секунд до его истечения
     //    this.refreshTokenTimeout = setTimeout(this.regreshToken, timeOut);
     //}
 

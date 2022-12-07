@@ -1,5 +1,6 @@
 ﻿using MainAPI.Models;
 using Newtonsoft.Json;
+using System.Net.Mime;
 using System.Text;
 using System.Text.Unicode;
 
@@ -21,7 +22,7 @@ namespace MainAPI.Services
             {
                 var client = _httpClient.CreateClient("Api");
                 HttpRequestMessage message = new HttpRequestMessage();
-                message.Headers.Add("Accept", "application/json");
+                //message.Headers.Add("Accept", "application/json");
                 message.RequestUri = new Uri(apiRequest.Url);
                 client.DefaultRequestHeaders.Clear();
 
@@ -31,7 +32,7 @@ namespace MainAPI.Services
                     //message.Content = new StringContent(JsonConvert.SerializeObject(apiRequest.Data), Encoding.UTF8, "application/json");
                     //message.Content = new FormUrlEncodedContent(new Dictionary<string, string> { { "token", "sdsdvs" } });
                     message.Content = new StringContent(JsonConvert.SerializeObject(new IdentityModel {token="sfgsdgfdssgsdg" }), 
-                        Encoding.UTF8, "application/json");
+                        Encoding.UTF8, MediaTypeNames.Application.Json);
                 }
 
                 switch (apiRequest.ApiType)

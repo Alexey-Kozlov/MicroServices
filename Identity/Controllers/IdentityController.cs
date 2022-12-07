@@ -71,7 +71,7 @@ namespace Identity.Controllers
         }
 
         [HttpPost("CheckToken")]
-        public async Task<IPrincipal> CheckToken(IdentityModel _data)
+        public async Task<IPrincipal> CheckToken([FromBody]IdentityModel _data)
         {
 
             var principal = await Task.FromResult(_tokenService.ValidateToken(_data.token));

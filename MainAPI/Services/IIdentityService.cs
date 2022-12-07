@@ -1,7 +1,10 @@
-﻿namespace MainAPI.Services
+﻿using System.Security.Claims;
+
+namespace MainAPI.Services
 {
     public interface IIdentityService : IBaseServise
     {
-        Task<T> GetIdentity<T>(string token);
+        Task<string> CheckToken(string token);
+        Task<ClaimsPrincipal?> GetPrincipal(string token);
     }
 }

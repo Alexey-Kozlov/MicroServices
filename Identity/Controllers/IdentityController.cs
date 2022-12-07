@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 using System.Security.Principal;
 
@@ -72,11 +73,9 @@ namespace Identity.Controllers
 
         [HttpPost]
         [Route("CheckToken")]
-        public async Task<IPrincipal> CheckToken([FromBody]IdentityModel _data)
+        public async Task<string> CheckToken([FromBody]IdentityModel _data)
         {
-
-            var principal = await Task.FromResult(_tokenService.ValidateToken(_data.token));
-            return principal;
+            return await Task.FromResult(_tokenService.ValidateToken(_data.token));
         }
     }
 }

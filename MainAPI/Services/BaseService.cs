@@ -22,17 +22,13 @@ namespace MainAPI.Services
             {
                 var client = _httpClient.CreateClient("Api");
                 HttpRequestMessage message = new HttpRequestMessage();
-                //message.Headers.Add("Accept", "application/json");
+                message.Headers.Add("Accept", "application/json");
                 message.RequestUri = new Uri(apiRequest.Url);
                 client.DefaultRequestHeaders.Clear();
 
                 if (apiRequest.Data != null)
                 {
-
-                    //message.Content = new StringContent(JsonConvert.SerializeObject(apiRequest.Data), Encoding.UTF8, "application/json");
-                    //message.Content = new FormUrlEncodedContent(new Dictionary<string, string> { { "token", "sdsdvs" } });
-                    message.Content = new StringContent(JsonConvert.SerializeObject(new IdentityModel {token="sfgsdgfdssgsdg" }), 
-                        Encoding.UTF8, MediaTypeNames.Application.Json);
+                    message.Content = new StringContent(JsonConvert.SerializeObject(apiRequest.Data), Encoding.UTF8, MediaTypeNames.Application.Json);
                 }
 
                 switch (apiRequest.ApiType)

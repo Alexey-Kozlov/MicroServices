@@ -15,12 +15,12 @@ namespace MainAPI.Controllers
         }
 
         [Route("home/login")]
-        //[Authorize]
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> Login()
         {
-            var token = HttpContext.Request.Headers["Authorization"];
-            var dd = await _identityService.GetIdentity<IPrincipal>(token!);
+            var user = User.Identity;
+
             return RedirectToAction("Index", "Home");
         }
 
@@ -29,13 +29,6 @@ namespace MainAPI.Controllers
         public IActionResult Logout()
         {
             return SignOut("Cookies", "oidc");
-        }
-
-        [HttpGet]
-        //[Route("home/index")]
-        public IActionResult Index()
-        {
-            return View();
         }
     }
 }

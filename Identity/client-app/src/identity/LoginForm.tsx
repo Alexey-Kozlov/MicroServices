@@ -9,8 +9,10 @@ import * as Yup from 'yup';
 import HeaderTheme from "./headerTheme";
 import { grey } from "@mui/material/colors";
 import agent from "./identityAgent";
+import { useSearchParams } from "react-router-dom";
 
 export default function LoginForm() {
+    const [searchParams] = useSearchParams();
     const validSchema = Yup.object().shape({
         login: Yup.string().required('Необходимо указать логин!'),
         password: Yup.string().required('Необходимо указать пароль!')
@@ -20,9 +22,14 @@ export default function LoginForm() {
         resolver: yupResolver(validSchema)
     });
     const onSubmit = handleSubmit(data => {
+        const returnUrl = searchParams.get('ReturnUrl');
         agent.Identity.login(data)
             .then((identity) => {
-                window.location.href = process.env.REACT_APP_FRONT! + '/token?token=' + identity.result.token;
+                let url = process.env.REACT_APP_FRONT! + '/token?token=' + identity.result.token;
+                if (returnUrl) {
+                    url = url + '&ReturnUrl=' + returnUrl;
+                }
+                window.location.href = url;
             })
             .catch(error => alert(error));
     });

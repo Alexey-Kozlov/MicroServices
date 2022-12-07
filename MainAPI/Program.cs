@@ -1,11 +1,14 @@
-using MainAPI.Models;
+п»їusing MainAPI.Models;
 using MainAPI.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.DataProtection.KeyManagement;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json.Linq;
+using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Security.Claims;
 using System.Text;
@@ -26,37 +29,6 @@ builder.Services.AddCors(opt =>
     });
 });
 
-
-
-
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-.AddJwtBearer(options =>
-{
-    //options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
-    //{
-    //    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("Секретный пароль")),
-    //    ValidateIssuerSigningKey = true,
-    //    ValidateIssuer = false,
-    //    ValidateAudience = false,
-    //    ValidateLifetime = true,
-    //    ClockSkew = TimeSpan.Zero //убираем дефолтное окно жизни токена в 5 минут
-    //};
-    //options.Events = new JwtBearerEvents
-    //{
-    //    OnMessageReceived = context =>
-    //    {
-    //        var accessToken = context.Request.Query["access_token"];
-    //        if (string.IsNullOrEmpty(accessToken))
-    //        {
-    //            //context.Token = accessToken;
-
-
-    //        }
-    //        return Task.CompletedTask;
-    //    }
-    //};
-});
-
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -67,37 +39,37 @@ if (app.Environment.IsDevelopment())
 
 app.Use(async (context, next) =>
 {
-    //Получаем токен из identity и делаем аутентификацию
-    //context.AuthenticateAsync();
-
+    //Р—РґРµСЃСЊ РєР°СЃС‚РѕРјРЅР°СЏ Р°СѓС‚РµРЅС‚РёС„РёРєР°С†РёСЏ - С‡РµСЂРµР· РѕС‚РґРµР»СЊРЅС‹Р№ СЃРµСЂРІРёСЃ Р°СѓС‚РµРЅС‚РёС„РёРєР°С†РёРё
+    //РџРѕР»СѓС‡Р°РµРј С‚РѕРєРµРЅ РёР· identity Рё РґРµР»Р°РµРј Р°СѓС‚РµРЅС‚РёС„РёРєР°С†РёСЋ
     if(context.Request.Method != "OPTIONS")
     {
         if (string.IsNullOrEmpty(context.Request.Headers["Authorization"]))
         {
-            context.Response.Redirect(builder.Configuration.GetValue(typeof(string), "IdentitySettings:IdentityUrlLogin")!.ToString()!);
+            var retUrl = builder.Configuration.GetValue(typeof(string), "IdentitySettings:IdentityUrlLogin")!.ToString();
+            if(context.Request.GetDisplayUrl().Contains(builder.Configuration.GetValue(typeof(string), "FrontUrl")!.ToString()!))
+            {
+                retUrl += "?ReturnUrl=" + context.Request.Path;
+            }
+            context.Response.Redirect(retUrl!);
             return;
         }
+        var token = context.Request.Headers["Authorization"].ToString().Replace("Bearer ", string.Empty);
+        using var scope = app.Services.CreateScope();
+        var services = scope.ServiceProvider;
+        var identityService = services.GetRequiredService<IIdentityService>();
 
+        var principal = await identityService.GetPrincipal(token!);
+        if(principal != null)
+        { 
+            //РІР°Р»РёРґРЅС‹Р№ С‚РѕРєРµРЅ, РїРѕР»СѓС‡РµРЅ РїРѕР»СЊР·РѕРІР°С‚РµР»СЊ
+            context.User = principal;
+        }
+        else
+        {
+            //РѕС€РёР±РєР° СЃ С‚РѕРєРµРЅРѕРј - РЅРµ Р°РІС‚РѕСЂРёР·РѕРІР°РЅ
+            throw new HttpRequestException("РќРµРІР°Р»РёРґРЅС‹Р№ С‚РѕРєРµРЅ", new Exception(), HttpStatusCode.Unauthorized);
+        }
     }
-
-
-    //var principal = new ClaimsPrincipal();
-
-    //var result1 = await context.AuthenticateAsync("Token1");
-    //if (!result1.Succeeded)
-    //{
-    //    context.Response.StatusCode = 401;
-    //    return;
-    //}
-
-    //if (result1?.Principal != null)
-    //{
-    //    principal.AddIdentities(result1.Principal.Identities);
-    //}
-
-    //context.User = principal;
-
-
     await next();
 });
 app.UseCors("CorsPolicy");

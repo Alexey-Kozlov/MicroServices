@@ -1,4 +1,5 @@
 ﻿using Identity.Models;
+using Microsoft.IdentityModel.Tokens;
 using System.Security.Principal;
 
 namespace Identity.Services
@@ -7,6 +8,6 @@ namespace Identity.Services
     {
         Task SetRefreshToken(ApplicationUser user);
         Task<string> CreateToken(ApplicationUser user);
-        IPrincipal ValidateToken(string token);
+        string ValidateToken(string token);
     }
 }

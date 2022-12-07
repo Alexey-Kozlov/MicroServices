@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -41,7 +42,7 @@ namespace Identity.Services
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.Now.AddMinutes(Double.Parse(_config["TokenExpiresMinutes"])),
+                Expires = DateTime.Now.AddHours(Double.Parse(_config["TokenExpiresHours"])),
                 SigningCredentials = cred,
                 Issuer = _config["TokenIssuer"],
                 Audience = _config["TokenAudience"]
@@ -88,21 +89,24 @@ namespace Identity.Services
             _accessor.HttpContext!.Response.Cookies.Append("refreshToken", refreshToken.Token, coockieOptions);
         }
 
-        public IPrincipal ValidateToken(string token)
+        public string ValidateToken(string token)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["TokenKey"]));
             var validationParameters =  new TokenValidationParameters()
             {
-                ValidateLifetime = false, // Because there is no expiration in the generated token
-                ValidateAudience = false, // Because there is no audiance in the generated token
-                ValidateIssuer = false,   // Because there is no issuer in the generated token
-                ValidIssuer = _config["TokenIssuer"],
-                ValidAudience = _config["TokenAudience"],
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["TokenKey"]))
+                ValidateLifetime = false, 
+                ValidateAudience = false, 
+                ValidateIssuer = false,   
+                IssuerSigningKey = key
             };
             SecurityToken validatedToken;
-            IPrincipal principal = tokenHandler.ValidateToken(token, validationParameters, out validatedToken);
-            return principal;
+            tokenHandler.ValidateToken(token, validationParameters, out validatedToken);
+            if (validatedToken != null && validatedToken.ValidTo > DateTime.Now)
+            {
+                return Convert.ToBase64String(key.Key);
+            }
+            return null;
         }
     }
 }

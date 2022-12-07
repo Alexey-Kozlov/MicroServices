@@ -1,6 +1,7 @@
 ﻿import { Tab, Tabs } from "@mui/material";
 import { observer } from "mobx-react-lite";
 import { useEffect, useState } from "react";
+import agent from "../api/agent";
 import { IIdentity } from "../models/identity";
 import { store } from "../stores/store";
 
@@ -30,15 +31,19 @@ export default observer(function LoginTab({ theme }: prop) {
         return isLoggedIn ? 1 : 0;  
     }
 
-    const identity_url = process.env.REACT_APP_IDENTITY!+'/login';
+    const identity_url = process.env.REACT_APP_MAIN!+'/home/login';
     const loginStyle = {
         position: "absolute",
         right:"10px"
     }
+    const handleTest = () => {
+        agent.Identity.test();
+    }
 
     return (
         <Tabs value={getActiveTab()} sx={loginStyle} TabIndicatorProps={{ sx: { display: "none" } }}>
-            {isLoggedIn && <Tab label={_identity && _identity!.displayName} href="/" sx={theme} />}
+            {isLoggedIn && <Tab label={_identity && _identity!.displayName}
+                onClick={() => handleTest() } sx={theme} />}
             {isLoggedIn && <Tab label="Выйти" onClick={() => handleLogout()} sx={theme} />}                
             {!isLoggedIn && <Tab label="Логин" href={identity_url} sx={theme} />}
             

@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
+using System.Security.Principal;
 using System.Text;
 
 namespace Identity.Services
@@ -41,7 +42,9 @@ namespace Identity.Services
             {
                 Subject = new ClaimsIdentity(claims),
                 Expires = DateTime.Now.AddMinutes(Double.Parse(_config["TokenExpiresMinutes"])),
-                SigningCredentials = cred
+                SigningCredentials = cred,
+                Issuer = _config["TokenIssuer"],
+                Audience = _config["TokenAudience"]
             };
 
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -83,6 +86,23 @@ namespace Identity.Services
                 Expires = DateTime.Now.AddDays(7)
             };
             _accessor.HttpContext!.Response.Cookies.Append("refreshToken", refreshToken.Token, coockieOptions);
+        }
+
+        public IPrincipal ValidateToken(string token)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var validationParameters =  new TokenValidationParameters()
+            {
+                ValidateLifetime = false, // Because there is no expiration in the generated token
+                ValidateAudience = false, // Because there is no audiance in the generated token
+                ValidateIssuer = false,   // Because there is no issuer in the generated token
+                ValidIssuer = _config["TokenIssuer"],
+                ValidAudience = _config["TokenAudience"],
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["TokenKey"]))
+            };
+            SecurityToken validatedToken;
+            IPrincipal principal = tokenHandler.ValidateToken(token, validationParameters, out validatedToken);
+            return principal;
         }
     }
 }

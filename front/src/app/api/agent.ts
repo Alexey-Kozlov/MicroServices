@@ -14,6 +14,7 @@ axios.interceptors.request.use(config => {
 
 axios.interceptors.response.use(async response => {
     //await sleep(1000);
+
     return response;
 }, (error: AxiosError) => {
     const navigate = store.commonStore.navigation;
@@ -100,6 +101,9 @@ const Identity = {
         });
         return axInstance.get<ResponseResult<IIdentity>>(process.env.REACT_APP_IDENTITY! +
             '/CurrentUser').then(responseBody);
+    },
+    test: () => {
+        return axios.get<ResponseResult<object>>(process.env.REACT_APP_MAIN! + '/home/login').then(responseBody)
     },
     register: (user: IIdentity) => axios.post<ResponseResult<IIdentity>>(process.env.REACT_APP_IDENTITY! +
         '/register', user).then(responseBody),    

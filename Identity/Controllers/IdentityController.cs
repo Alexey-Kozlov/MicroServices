@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
+using System.Security.Principal;
 
 namespace Identity.Controllers
 {
@@ -67,6 +68,14 @@ namespace Identity.Controllers
             _response.IsSuccess = false;
             _response.Errors = new List<string>() { "Ошибка логина или пароля" };
             return Unauthorized(_response);
+        }
+
+        [HttpPost("CheckToken")]
+        public async Task<IPrincipal> CheckToken(IdentityModel _data)
+        {
+
+            var principal = await Task.FromResult(_tokenService.ValidateToken(_data.token));
+            return principal;
         }
     }
 }

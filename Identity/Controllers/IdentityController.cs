@@ -70,7 +70,8 @@ namespace Identity.Controllers
             return Unauthorized(_response);
         }
 
-        [HttpPost("CheckToken")]
+        [HttpPost]
+        [Route("CheckToken")]
         public async Task<IPrincipal> CheckToken([FromBody]IdentityModel _data)
         {
 

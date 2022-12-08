@@ -1,0 +1,53 @@
+﻿using Microsoft.AspNetCore.Http.Extensions;
+using System.Net;
+
+namespace MainAPI.Services
+{
+    public class IdentityMiddleware : IMiddleware
+    {
+        private readonly IConfiguration _config;
+        private readonly IIdentityService _identityService;
+        
+        public IdentityMiddleware( IIdentityService identityService, IConfiguration config) 
+        {
+            _identityService = identityService;
+            _config = config;
+        }
+
+        public async Task InvokeAsync(HttpContext context, RequestDelegate next)
+        {
+            //Здесь кастомная аутентификация - через отдельный сервис аутентификации
+            //Получаем токен из identity и делаем аутентификацию
+            if (context.Request.Method != "OPTIONS")
+            {
+                if (string.IsNullOrEmpty(context.Request.Headers["Authorization"]))
+                {
+                    var retUrl = _config["IdentitySettings:IdentityUrlLogin"];
+                    if (context.Request.GetDisplayUrl().Contains(_config["FrontUrl"]!))
+                    {
+                        retUrl += "?ReturnUrl=" + context.Request.Path;
+                    }
+                    context.Response.Redirect(retUrl!);
+                    return;
+                }
+                //токен есть, но если это обращение к фронту - пропускаем, для фронта контекст пользователя не нужен
+                if (!context.Request.GetDisplayUrl().Contains(_config["FrontUrl"]!))
+                {
+                    var token = context.Request.Headers["Authorization"].ToString().Replace("Bearer ", string.Empty);
+                    var principal = await _identityService.GetPrincipal(token!);
+                    if (principal != null)
+                    {
+                        //валидный токен, получен пользователь
+                        context.User = principal;
+                    }
+                    else
+                    {
+                        //ошибка с токеном - не авторизован
+                        throw new HttpRequestException("Невалидный токен", new Exception(), HttpStatusCode.Unauthorized);
+                    }
+                }
+            }
+            await next(context);
+        }
+    }
+}

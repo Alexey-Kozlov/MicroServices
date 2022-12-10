@@ -17,6 +17,7 @@ axios.interceptors.response.use(async response => {
 
     return response;
 }, (error: AxiosError) => {
+    //debugger;
     const navigate = store.commonStore.navigation;
     if (error.response) {
         const { data, status, config } = error.response!;

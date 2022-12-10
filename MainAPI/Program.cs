@@ -1,14 +1,10 @@
-﻿using MainAPI.Models;
+﻿using MIdentity;
 using MainAPI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddHttpClient<IIdentityService,IdentityService>();
-builder.Services.AddScoped<IIdentityService, IdentityService>();
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllers();
 builder.Services.AddSwaggerGen();
-builder.Services.Configure<IdentitySettings>(builder.Configuration);
-builder.Services.AddScoped<IdentityMiddleware>();
-
+builder.Services.AddAutoMapper(typeof(Mapping));
 builder.Services.AddCors(opt =>
 {
     opt.AddPolicy("CorsPolicy", policy =>
@@ -17,7 +13,7 @@ builder.Services.AddCors(opt =>
         .AllowAnyMethod().AllowAnyHeader().AllowCredentials();
     });
 });
-
+builder.Services.AddMIdentity(builder);
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -25,12 +21,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
+app.UseCors("CorsPolicy");
 //здесь кастомная аутентификация и авторизация через identity
 app.UseMiddleware<IdentityMiddleware>();
-
-app.UseCors("CorsPolicy");
-
 app.UseRouting();
 app.UseHttpsRedirection();
 app.UseAuthentication();

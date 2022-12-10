@@ -8,6 +8,6 @@ namespace Identity.Services
     {
         Task SetRefreshToken(ApplicationUser user);
         Task<string> CreateToken(ApplicationUser user);
-        string ValidateToken(string token);
+        bool ValidateToken(string token);
     }
 }

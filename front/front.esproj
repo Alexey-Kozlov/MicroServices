@@ -12,6 +12,15 @@
     <BuildOutputFolder>$(MSBuildProjectDirectory)\build</BuildOutputFolder>
   </PropertyGroup>
   <ItemGroup>
-    <Folder Include="cert\" />
+    <TypeScriptConfiguration Remove="cert\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="cert\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="cert\192_168_1_10.key" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="cert\192_168_1_10.crt" />
   </ItemGroup>
 </Project>

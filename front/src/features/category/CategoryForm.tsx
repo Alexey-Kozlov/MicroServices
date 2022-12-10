@@ -13,7 +13,7 @@ type FormData = {
     name: string;
 }
 
-export default function CategoryAdd() {
+export default function CategoryForm() {
     const validSchema = Yup.object().shape({
         name: Yup.string().required('Необходимо указать наименование!'),
     });

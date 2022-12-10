@@ -1,14 +1,14 @@
 ﻿using Microsoft.AspNetCore.Http.Extensions;
 using System.Net;
 
-namespace MainAPI.Services
+namespace MIdentity
 {
     public class IdentityMiddleware : IMiddleware
     {
         private readonly IConfiguration _config;
         private readonly IIdentityService _identityService;
-        
-        public IdentityMiddleware( IIdentityService identityService, IConfiguration config) 
+
+        public IdentityMiddleware(IIdentityService identityService, IConfiguration config)
         {
             _identityService = identityService;
             _config = config;
@@ -22,23 +22,21 @@ namespace MainAPI.Services
             {
                 if (string.IsNullOrEmpty(context.Request.Headers["Authorization"]))
                 {
-                    var retUrl = _config["IdentitySettings:IdentityUrlLogin"];
-                    if (context.Request.GetDisplayUrl().Contains(_config["FrontUrl"]!))
-                    {
-                        retUrl += "?ReturnUrl=" + context.Request.Path;
-                    }
-                    context.Response.Redirect(retUrl!);
+                    context.Response.Redirect(_config["FrontUrl"]!);
                     return;
                 }
                 //токен есть, но если это обращение к фронту - пропускаем, для фронта контекст пользователя не нужен
                 if (!context.Request.GetDisplayUrl().Contains(_config["FrontUrl"]!))
                 {
                     var token = context.Request.Headers["Authorization"].ToString().Replace("Bearer ", string.Empty);
-                    var principal = await _identityService.GetPrincipal(token!);
-                    if (principal != null)
+                    if (await _identityService.CheckToken(token))
                     {
-                        //валидный токен, получен пользователь
-                        context.User = principal;
+                        var principal = _identityService.GetPrincipal(token!);
+                        if (principal != null)
+                        {
+                            //валидный токен, получен пользователь
+                            context.User = principal;
+                        }
                     }
                     else
                     {

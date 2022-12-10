@@ -73,7 +73,7 @@ namespace Identity.Controllers
 
         [HttpPost]
         [Route("CheckToken")]
-        public async Task<string> CheckToken([FromBody]IdentityModel _data)
+        public async Task<bool> CheckToken([FromBody]IdentityModel _data)
         {
             return await Task.FromResult(_tokenService.ValidateToken(_data.token));
         }

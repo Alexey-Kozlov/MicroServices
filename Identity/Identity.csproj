@@ -7,10 +7,15 @@
 
   <ItemGroup>
     <Compile Remove="app-client\**" />
+    <Compile Remove="client-app\cert\**" />
     <Content Remove="app-client\**" />
+    <Content Remove="client-app\cert\**" />
     <EmbeddedResource Remove="app-client\**" />
+    <EmbeddedResource Remove="client-app\cert\**" />
     <None Remove="app-client\**" />
+    <None Remove="client-app\cert\**" />
     <TypeScriptCompile Remove="app-client\**" />
+    <TypeScriptCompile Remove="client-app\cert\**" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,4 +1,4 @@
-﻿namespace MainAPI.Models
+﻿namespace Models
 {
     public class ResponseDTO
     {

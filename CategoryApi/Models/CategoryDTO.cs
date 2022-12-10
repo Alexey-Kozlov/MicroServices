@@ -1,4 +1,4 @@
-﻿namespace CategoryAPI.Models
+﻿namespace Models
 {
     public class CategoryDTO
     {

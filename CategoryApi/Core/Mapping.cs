@@ -1,19 +1,14 @@
 ﻿using AutoMapper;
 using CategoryAPI.Domain;
-using CategoryAPI.Models;
+using Models;
 
 namespace CategoryAPI.Core
 {
-    public class Mapping
+    public class Mapping : Profile
     {
-        public static MapperConfiguration RegisterMaps()
+        public Mapping()
         {
-            var mappingConfig = new MapperConfiguration(config =>
-            {
-                config.CreateMap<Category, CategoryDTO>();
-                config.CreateMap<CategoryDTO, Category>();
-            });
-            return mappingConfig;
+            CreateMap<Category, CategoryDTO>().ReverseMap();
         }
     }
 }

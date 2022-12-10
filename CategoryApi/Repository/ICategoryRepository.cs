@@ -1,4 +1,4 @@
-﻿using CategoryAPI.Models;
+﻿using Models;
 
 namespace CategoryAPI.Repository
 {

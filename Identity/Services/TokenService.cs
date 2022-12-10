@@ -43,9 +43,7 @@ namespace Identity.Services
             {
                 Subject = new ClaimsIdentity(claims),
                 Expires = DateTime.Now.AddHours(Double.Parse(_config["TokenExpiresHours"])),
-                SigningCredentials = cred,
-                Issuer = _config["TokenIssuer"],
-                Audience = _config["TokenAudience"]
+                SigningCredentials = cred
             };
 
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -89,7 +87,7 @@ namespace Identity.Services
             _accessor.HttpContext!.Response.Cookies.Append("refreshToken", refreshToken.Token, coockieOptions);
         }
 
-        public string ValidateToken(string token)
+        public bool ValidateToken(string token)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["TokenKey"]));
@@ -104,9 +102,9 @@ namespace Identity.Services
             tokenHandler.ValidateToken(token, validationParameters, out validatedToken);
             if (validatedToken != null && validatedToken.ValidTo > DateTime.Now)
             {
-                return Convert.ToBase64String(key.Key);
+                return true;
             }
-            return null;
+            return false;
         }
     }
 }

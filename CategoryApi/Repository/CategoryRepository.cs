@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using CategoryAPI.Domain;
-using CategoryAPI.Models;
+using Models;
 using CategoryAPI.Persistance;
 
 namespace CategoryAPI.Repository

@@ -7,7 +7,6 @@ using Identity.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
-//using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -26,8 +25,8 @@ builder.Services.AddControllers();
 builder.Services.AddCors(opt =>
 {
     opt.AddPolicy("CorsPolicy", policy =>
-    {
-        policy.WithOrigins(builder.Configuration.GetValue(typeof(string), "WEB_URL").ToString())
+    {        
+        policy.WithOrigins(builder.Configuration.GetValue(typeof(string), "CORS_URLS").ToString().Split(new char[] {','}))
         .AllowAnyMethod().AllowAnyHeader().AllowCredentials();
     });
 });
@@ -98,15 +97,10 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateIssuer = false,
             ValidateAudience = false,
             ValidateLifetime = true,
-            ClockSkew = TimeSpan.Zero //убираем дефолтное окно жизни токена в 5 минут
+            ClockSkew = TimeSpan.Zero
         };
     });
 builder.Services.AddAuthorization();
-//builder.Services.AddSpaStaticFiles(options =>
-//{
-//    options.RootPath = "app-client/distr";
-//});
-
 var app = builder.Build();
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
@@ -117,7 +111,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-//app.UseSpaStaticFiles();
 app.UseDefaultFiles();
 app.UseStaticFiles();
 
@@ -128,14 +121,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 app.MapFallbackToController("Index", "Fallback");
-//app.UseSpa(options =>
-//{
-//    options.Options.SourcePath = "app-client";
-//    if (app.Environment.IsDevelopment())
-//    {
-//        options.UseReactDevelopmentServer(npmScript: "start");
-//    }
-//});
 
 using var scope = app.Services.CreateScope();
 var services = scope.ServiceProvider;

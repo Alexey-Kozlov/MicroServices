@@ -1,15 +1,16 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using CategoryAPI.Models;
+using Models;
 using CategoryAPI.Repository;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CategoryAPI.Controllers
 {
+    [Authorize]
     [Route("api/category")]
     public class CategoryAPIController : ControllerBase
     {
         protected ResponseDTO _response;
         private readonly ICategoryRepository _categoryRepository;
-
         public CategoryAPIController(ICategoryRepository categoryRepository)
         {
             this._response = new ResponseDTO();

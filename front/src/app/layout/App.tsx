@@ -10,6 +10,7 @@ import CategoryMain from '../../features/category/CategoryMain';
 import CategoryForm from '../../features/category/CategoryForm';
 import GetToken from './getToken';
 import IdentityRedirect from './IdentityRedirect';
+import UnAthorized from '../../features/identity/unathorized';
 
 export default observer(function App() {
     const navigation = useNavigate();
@@ -22,7 +23,8 @@ export default observer(function App() {
       <>
           <Header />
           <Routes>
-              <Route path="/" element={<IdentityRedirect />}></Route>
+              <Route path="/" element={<p>Главная</p>}></Route>
+              <Route path="/unauthorised" element={<UnAthorized />}></Route>
               <Route path="/products" element={<ProductMain />}></Route>
               <Route path="/product" element={<ProductForm />}></Route>
               <Route path="/product/:id" element={<ProductForm />}></Route>

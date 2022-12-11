@@ -36,10 +36,15 @@ export default class IdentityStore {
         //обращаемся к сервису аутентификации для проверки токена
         const token = window.localStorage.getItem('jwt');
         if (token) {            
-            //получаем полное Identity
+            //получаем Identity
             const identity = await agent.Identity.identity(token);
-            runInAction(() => store.identityStore.identity = identity.result);               
-            return identity.result;           
+            if (identity.isSuccess) {
+                runInAction(() => store.identityStore.identity = identity.result);
+                return identity.result;
+            } else {
+                return null;
+            }
+         
         } 
         return null;
     }

@@ -3,8 +3,10 @@ import HeaderTheme from "../header/headerTheme";
 import { useState } from "react";
 import { useLocation } from "react-router-dom";
 import LoginTab from "../../app/components/LoginTab";
+import { useStore } from "../../app/stores/store";
+import { observer } from "mobx-react-lite";
 
-export default function Header() {
+export default observer(function Header() {
 
     let currentMenu = {
         tabNumber: 0
@@ -34,15 +36,18 @@ export default function Header() {
 
     const _tabState = getActiveTab(url.pathname);
     const [tabState, setTabState] = useState(_tabState.tabNumber);
+    const { identityStore: { isLoggedIn } } = useStore();
     return (
         <ThemeProvider theme={HeaderTheme}>
             <AppBar position="fixed" >
                 <Toolbar disableGutters>
-                    <Tabs value={tabState}>
-                        <Tab label="Главная" sx={HeaderTheme.typography.tab} href="/" />
-                        <Tab label="Продукты" sx={HeaderTheme.typography.tab} href="/products" />
-                        <Tab label="Категории" sx={HeaderTheme.typography.tab} href="/category" />
-                    </Tabs>
+                    {isLoggedIn &&
+                        <Tabs value={tabState}>
+                            <Tab label="Главная" sx={HeaderTheme.typography.tab} href="/" />
+                            <Tab label="Продукты" sx={HeaderTheme.typography.tab} href="/products" />
+                            <Tab label="Категории" sx={HeaderTheme.typography.tab} href="/category" />
+                        </Tabs>
+                    }
                     <LoginTab theme={HeaderTheme.typography.tab } />
                 </Toolbar>
             </AppBar>
@@ -50,4 +55,4 @@ export default function Header() {
         </ThemeProvider>
 
     )
-}
+})

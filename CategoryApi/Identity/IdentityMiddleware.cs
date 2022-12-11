@@ -22,7 +22,8 @@ namespace MIdentity
             {
                 if (string.IsNullOrEmpty(context.Request.Headers["Authorization"]))
                 {
-                    context.Response.Redirect(_config["FrontUrl"]!);
+                    //context.Response.Redirect(_config["FrontUrl"]!);
+                    context.Response.StatusCode = StatusCodes.Status401Unauthorized;
                     return;
                 }
                 //токен есть, но если это обращение к фронту - пропускаем, для фронта контекст пользователя не нужен

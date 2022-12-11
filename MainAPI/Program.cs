@@ -14,6 +14,11 @@ builder.Services.AddCors(opt =>
     });
 });
 builder.Services.AddMIdentity(builder);
+builder.Services.AddAuthentication().AddJwtBearer();
+
+builder.Services.AddScoped<IProducts, Products>();
+builder.Services.AddScoped<ICategory, Category>();
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())

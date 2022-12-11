@@ -14,20 +14,22 @@ axios.interceptors.request.use(config => {
 
 axios.interceptors.response.use(async response => {
     //await sleep(1000);
-
     return response;
 }, (error: AxiosError) => {
-    //debugger;
     const navigate = store.commonStore.navigation;
     if (error.response) {
         const { data, status, config } = error.response!;
         error.response!.data = getErrorText(data, error);
-        console.log("Agent error - " + error.response!.data);
+        console.log("Agent error - " + error.response!.data);        
         switch (status) {
-            case 400:
+            case 404:
                 if (config.method === 'get') {
                     navigate!('/not-found');
                 }
+                break;
+            case 401:
+                navigate!('/unathorized');
+                break;
         }       
     }
     console.log("Agent error - " + error.stack);
@@ -81,8 +83,8 @@ const Product = {
 }
 
 const Category = {
-    getCategoryList: () => axios.get<ResponseResult<ICategory[]>>(process.env.REACT_APP_CATEGORY_API! +
-        '/category').then(responseBody),
+    getCategoryList: () => axios.get<ResponseResult<ICategory[]>>(process.env.REACT_APP_MAIN! +
+        '/api/category/GetCategoryList').then(responseBody),
     getCategoryById: (id: string) => axios.get<ResponseResult<ICategory>>(process.env.REACT_APP_CATEGORY_API! +
         `/category/${id}`).then(responseBody),
     create: (category: ICategory) => axios.post<ResponseResult<ICategory>>(process.env.REACT_APP_CATEGORY_API! +

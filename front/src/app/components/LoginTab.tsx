@@ -1,6 +1,7 @@
 ﻿import { Tab, Tabs } from "@mui/material";
 import { observer } from "mobx-react-lite";
 import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import agent from "../api/agent";
 import { IIdentity } from "../models/identity";
 import { store } from "../stores/store";
@@ -12,12 +13,22 @@ interface prop {
 export default observer(function LoginTab({ theme }: prop) {
     const {identity,isLoggedIn } = store.identityStore;
     const [_identity, setIdentity] = useState<IIdentity>();
+    const url = useLocation();
     useEffect(() => {
         if (isLoggedIn) {
             setIdentity(identity!)
         } else {
             store.identityStore.getIdentity().then((identity) => {
-                setIdentity(identity!);
+                if (identity) {
+                    setIdentity(identity!);
+                    if (url.pathname.toLowerCase() === "/unauthorised") {
+                        store.commonStore.navigation!('/');
+                    }
+                } else {
+                    if (url.pathname.toLowerCase() != "/unauthorised") {
+                        store.commonStore.navigation!('/unauthorised');
+                    }
+                }
             });
         }
     }, [setIdentity]);
@@ -31,7 +42,6 @@ export default observer(function LoginTab({ theme }: prop) {
         return isLoggedIn ? 1 : 0;  
     }
 
-    const identity_url = process.env.REACT_APP_MAIN!+'/home/login';
     const loginStyle = {
         position: "absolute",
         right:"10px"
@@ -45,7 +55,7 @@ export default observer(function LoginTab({ theme }: prop) {
             {isLoggedIn && <Tab label={_identity && _identity!.displayName}
                 onClick={() => handleTest() } sx={theme} />}
             {isLoggedIn && <Tab label="Выйти" onClick={() => handleLogout()} sx={theme} />}                
-            {!isLoggedIn && <Tab label="Логин" href={identity_url} sx={theme} />}
+            {!isLoggedIn && <Tab label="Логин" href={process.env.REACT_APP_IDENTITY! + '/login'} sx={theme} />}
             
         </Tabs>        
     )

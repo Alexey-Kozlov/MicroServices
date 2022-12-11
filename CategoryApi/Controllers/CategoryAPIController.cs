@@ -22,7 +22,7 @@ namespace CategoryAPI.Controllers
         {
             try
             {
-                _response.Result = await _categoryRepository.GetCategory();
+                _response.Result = await _categoryRepository.GetCategoryList();
 
             }
             catch (Exception e)

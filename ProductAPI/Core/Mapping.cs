@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using ProductAPI.Domain;
-using ProductAPI.Models;
+using Models;
 
 namespace ProductAPI.Core
 {

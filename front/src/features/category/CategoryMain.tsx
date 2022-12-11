@@ -1,15 +1,38 @@
 ﻿import { Button, Container, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 import { observer } from "mobx-react-lite";
-import { useEffect } from "react";
-import { useStore } from "../../app/stores/store";
+import { useEffect, useState } from "react";
+import ConfirmDialog from "../../app/components/ConfirmDialog";
+import EditButtons from "../../app/components/EditButtons";
+import { store, useStore } from "../../app/stores/store";
 
 export default observer(function CategoryMain() {
-    const { categoryStore: { getCategoryList, categoryRegistry } } = useStore();
-
+    const { categoryStore: { getCategoryList, categoryRegistry, deleteCategory } } = useStore();
+    const confirmObject = {
+        text: "",
+        id: 0
+    }
+    const [confirmObj, setConfirmObj] = useState<typeof confirmObject>(confirmObject);
+    const [showConfirm, setShowConfirm] = useState(false);
     useEffect(() => {
         getCategoryList();
     }, [getCategoryList]);
 
+    const handleEditButton = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, id: number) => {
+        store.commonStore.navigation!(`/category/${id}`);
+    }
+    const handleDeleteButton = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, id: number, name: string) => {
+        confirmObject.id = id;
+        confirmObject.text = "Действительно удалить '" + name + "'?";
+        setConfirmObj(confirmObject);
+        setShowConfirm(true);
+
+    }
+    const handleConfirmClose = (confirm: boolean) => {
+        setShowConfirm(false);
+        if (confirm) {
+            deleteCategory(confirmObj!.id);
+        }
+    };
     return (
         <>
             <Container maxWidth="md" sx={{ marginTop: "50px" }}>
@@ -36,12 +59,21 @@ export default observer(function CategoryMain() {
                                 }}>
                                     <TableCell>{category.id}</TableCell>
                                     <TableCell>{category.name}</TableCell>
+                                    <TableCell>
+                                        <EditButtons
+                                            onClickEditButton={(e) => handleEditButton(e, category.id)}
+                                            onClickDeleteButton={(e) => handleDeleteButton(e, category.id, category.name)}
+                                        />
+                                    </TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>
                     </Table>
                 </TableContainer>
             </Container>
+            <ConfirmDialog id="deleteItemConfirm" mainText={confirmObj!.text}
+                titleText="Подтверждение удаления записи"
+                open={showConfirm} onClose={handleConfirmClose} />
         </>
     )
 })

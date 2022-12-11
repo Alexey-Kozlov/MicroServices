@@ -1,4 +1,4 @@
-﻿import { Button, Container, TextField, ThemeProvider, Typography } from "@mui/material";
+﻿import { Button, CircularProgress, Container, TextField, ThemeProvider, Typography } from "@mui/material";
 import Grid2 from "@mui/material/Unstable_Grid2";
 import { Controller, useForm } from "react-hook-form";
 import InputTheme from "../../app/themes/InputTheme";
@@ -6,31 +6,41 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as Yup from 'yup';
 import HeaderTheme from "../header/headerTheme";
 import { store, useStore } from "../../app/stores/store";
-import { Category } from "../../app/models/icategory";
+import { Category, ICategory } from "../../app/models/icategory";
+import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import agent from "../../app/api/agent";
+import { observer } from "mobx-react-lite";
+import { grey } from "@mui/material/colors";
 
-type FormData = {
-    id: number;
-    name: string;
-}
-
-export default function CategoryForm() {
+export default observer(function CategoryForm() {
+    let { id } = useParams<{ id: string }>();
     const validSchema = Yup.object().shape({
         name: Yup.string().required('Необходимо указать наименование!'),
     });
-    const { categoryStore: { addCategory } } = useStore();
-    const { handleSubmit, control, formState: { errors } } = useForm<FormData>({
-        defaultValues: {
-            name: ""
-        },
+    const { categoryStore: { addEditCategory, getCategoryById, isSubmitted } } = useStore();
+    const { handleSubmit, control, formState: { errors }, reset } = useForm<ICategory>({
+        defaultValues: new Category(0,""),
         resolver: yupResolver(validSchema)
     });
     const onSubmit = handleSubmit(data => {
-        addCategory(new Category(0, data.name));
-        store.commonStore.navigation!('/category');
+        if (!id) {
+            id = "0";
+        } 
+        addEditCategory(new Category(Number(id), data.name)).then(() => {
+            store.commonStore.navigation!('/category');
+        })
     });
     const labelStyle = {
         width: "130px"
     }
+    useEffect(() => {
+        if (id) {
+            getCategoryById(id).then((category) => {
+                reset(category);
+            });
+        }
+    }, [id, reset, getCategoryById]);
     return (
         <ThemeProvider theme={InputTheme}>
             <form onSubmit={onSubmit}>
@@ -60,7 +70,28 @@ export default function CategoryForm() {
                         </Grid2>                                               
                         <Grid2 container direction="row" justifyContent="center">
                             <Grid2>
-                                <Button type="submit" variant="outlined" >Ввод</Button>
+                                <Button variant="outlined" sx={{ marginRight: "10px" }}
+                                    onClick={() => store.commonStore.navigation!('/category')}>
+                                    Отмена
+                                </Button>
+                                <Button type="submit" variant="outlined"
+                                    disabled={isSubmitted}>
+                                    {id ? "Сохранить" : "Ввод"}
+                                    {isSubmitted && (
+                                        <CircularProgress
+                                            size={24}
+                                            sx={{
+                                                color: grey[500],
+                                                position: 'absolute',
+                                                top: '50%',
+                                                left: '50%',
+                                                marginTop: '-12px',
+                                                marginLeft: '-12px',
+                                            }}
+                                        />
+                                    )}
+                                </Button>
+
                             </Grid2>
                         </Grid2>
                     </Grid2>
@@ -68,4 +99,4 @@ export default function CategoryForm() {
             </form>
         </ThemeProvider>
     )
-}
+})

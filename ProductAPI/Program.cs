@@ -1,10 +1,11 @@
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using ProductAPI.Persistance;
 using ProductAPI.Core;
 using ProductAPI.Repository;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using MIdentity;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,40 +14,23 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 {
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
-    
-IMapper mapper = Mapping.RegisterMaps().CreateMapper();
-builder.Services.AddSingleton(mapper);
+
+builder.Services.AddAutoMapper(typeof(Mapping));
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddCors(opt =>
 {
     opt.AddPolicy("CorsPolicy", policy =>
     {
-        policy.WithOrigins(builder.Configuration.GetValue(typeof(string), "WebUrl").ToString()!)
+        policy.WithOrigins(builder.Configuration.GetValue(typeof(string), "WebUrl")!.ToString()!)
         .AllowAnyHeader().AllowAnyMethod().AllowCredentials();
     });
 });
 builder.Services.AddControllers();
 
-builder.Services.AddAuthentication("Bearer")
-    .AddJwtBearer("Bearer", options =>
-    {
-        options.Authority = builder.Configuration.GetValue(typeof(string), "IdentityUrl").ToString();
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateAudience = false
-        };
-    });
-builder.Services.AddAuthorization(options =>
-{
-    options.AddPolicy("ApiScope", policy =>
-    {
-        policy.RequireAuthenticatedUser();
-        policy.RequireClaim("scope", "MyMS");
-    });
-});
+builder.Services.AddMIdentity(builder);
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "ProductAPI", Description="����������� Product" });
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "ProductAPI", Description="Product" });
     c.EnableAnnotations();
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
@@ -83,9 +67,16 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
-app.UseAuthorization();
 app.UseCors("CorsPolicy");
-app.MapControllers();
+//здесь кастомная аутентификация и авторизация через identity
+app.UseMiddleware<IdentityMiddleware>();
+app.UseRouting();
+app.UseHttpsRedirection();
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();

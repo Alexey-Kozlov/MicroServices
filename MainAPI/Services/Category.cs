@@ -15,8 +15,7 @@ namespace MainAPI.Services
             return await SendAsync<T>(new ApiRequest()
             {
                 ApiType = ApiType.Get,
-                Data= id,
-                Url= _config["CategoryAPI"]! + "/api/category",
+                Url = _config["CategoryAPI"]! + "/api/category/" + id.ToString(), 
                 Token = token
             });
         }
@@ -26,8 +25,28 @@ namespace MainAPI.Services
             return await SendAsync<T>(new ApiRequest()
             {
                 ApiType = ApiType.Get,
-                Data = "",
                 Url = _config["CategoryAPI"]! + "/api/category",
+                Token = token
+            });
+        }
+
+        public async Task<T> AddUpdateCategory<T>(CategoryDTO category, string token)
+        {
+            return await SendAsync<T>(new ApiRequest()
+            {
+                ApiType = ApiType.Post,
+                Url = _config["CategoryAPI"]! + "/api/category",
+                Data= category,
+                Token = token
+            });
+        }
+
+        public async Task<T> DeleteCategory<T>(int id, string token)
+        {
+            return await SendAsync<T>(new ApiRequest()
+            {
+                ApiType = ApiType.Delete,
+                Url = _config["CategoryAPI"]! + "/api/category/" + id.ToString(),
                 Token = token
             });
         }

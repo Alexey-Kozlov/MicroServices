@@ -9,7 +9,6 @@ import Header from '../../features/header/Header';
 import CategoryMain from '../../features/category/CategoryMain';
 import CategoryForm from '../../features/category/CategoryForm';
 import GetToken from './getToken';
-import IdentityRedirect from './IdentityRedirect';
 import UnAthorized from '../../features/identity/unathorized';
 
 export default observer(function App() {
@@ -30,6 +29,7 @@ export default observer(function App() {
               <Route path="/product/:id" element={<ProductForm />}></Route>
               <Route path="/category" element={<CategoryMain />}></Route>
               <Route path="/addCategory" element={<CategoryForm />}></Route>
+              <Route path="/category/:id" element={<CategoryForm />}></Route>
               <Route path="/token" element={<GetToken />}></Route>
           </Routes>
     </>

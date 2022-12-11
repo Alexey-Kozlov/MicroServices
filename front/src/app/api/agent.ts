@@ -83,14 +83,14 @@ const Product = {
 }
 
 const Category = {
-    getCategoryList: () => axios.get<ResponseResult<ICategory[]>>(process.env.REACT_APP_MAIN! +
+    getCategoryList: () => axios.get<ICategory[]>(process.env.REACT_APP_MAIN! +
         '/api/category/GetCategoryList').then(responseBody),
-    getCategoryById: (id: string) => axios.get<ResponseResult<ICategory>>(process.env.REACT_APP_CATEGORY_API! +
-        `/category/${id}`).then(responseBody),
-    create: (category: ICategory) => axios.post<ResponseResult<ICategory>>(process.env.REACT_APP_CATEGORY_API! +
-        `/category`, { ...category }).then(responseBody),
-    delete: (id: number) => axios.delete<ResponseResult<ICategory>>(process.env.REACT_APP_CATEGORY_API! +
-        `/category/${id.toString()}`).then(responseBody)
+    getCategoryById: (id: string) => axios.get<ICategory>(process.env.REACT_APP_MAIN! +
+        `/api/category/${id}`).then(responseBody),
+    addEdit: (category: ICategory) => axios.post<ICategory>(process.env.REACT_APP_MAIN! +
+        `/api/category`, { ...category }).then(responseBody),
+    delete: (id: number) => axios.delete<ICategory>(process.env.REACT_APP_MAIN! +
+        `/api/category/${id.toString()}`).then(responseBody)
 }
 
 const Identity = {

@@ -1,10 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ProductAPI.Models;
+using Models;
 using ProductAPI.Repository;
 
 namespace ProductAPI.Controllers
 {
+    [Authorize]
     [Route("api/products")]
     public class ProductAPIController : ControllerBase
     {
@@ -17,7 +18,6 @@ namespace ProductAPI.Controllers
             this._response = new ResponseDTO();
         }
 
-        [Authorize]
         [HttpGet]
         public async Task<ResponseDTO> Get()
         {
@@ -34,7 +34,6 @@ namespace ProductAPI.Controllers
             return _response;
         }
 
-        [Authorize]
         [HttpGet]
         [Route("{id}")]
         public async Task<ResponseDTO> Get(int id)
@@ -52,7 +51,6 @@ namespace ProductAPI.Controllers
             return _response;
         }
 
-        [Authorize]
         [HttpPost]
         public async Task<ResponseDTO> Post([FromBody] ProductDTO productDTO)
         {

@@ -1,4 +1,4 @@
-﻿namespace ProductAPI.Models
+﻿namespace Models
 {
     public class ResponseDTO
     {

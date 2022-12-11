@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using ProductAPI.Domain;
-using ProductAPI.Models;
+using Models;
 using ProductAPI.Persistance;
 
 namespace ProductAPI.Repository

@@ -62,7 +62,7 @@ namespace CategoryAPI.Repository
             return _mapper.Map<CategoryDTO>(category);
         }
 
-        public async Task<IEnumerable<CategoryDTO>> GetCategory()
+        public async Task<IEnumerable<CategoryDTO>> GetCategoryList()
         {
             var category = await _appDbContext.Category.ToListAsync();
             return _mapper.Map<List<CategoryDTO>>(category);

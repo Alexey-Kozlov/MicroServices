@@ -1,4 +1,4 @@
-﻿using ProductAPI.Models;
+﻿using Models;
 
 namespace ProductAPI.Repository
 {

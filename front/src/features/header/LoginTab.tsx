@@ -2,9 +2,9 @@
 import { observer } from "mobx-react-lite";
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import agent from "../api/agent";
-import { IIdentity } from "../models/identity";
-import { store } from "../stores/store";
+import agent from "../../app/api/agent";
+import { IIdentity } from "../../app/models/identity";
+import { store } from "../../app/stores/store";
 
 interface prop {
     theme: React.CSSProperties
@@ -21,12 +21,12 @@ export default observer(function LoginTab({ theme }: prop) {
             store.identityStore.getIdentity().then((identity) => {
                 if (identity) {
                     setIdentity(identity!);
-                    if (url.pathname.toLowerCase() === "/unauthorised") {
+                    if (url.pathname.toLowerCase() === "/unathorized") {
                         store.commonStore.navigation!('/');
                     }
                 } else {
-                    if (url.pathname.toLowerCase() != "/unauthorised") {
-                        store.commonStore.navigation!('/unauthorised');
+                    if (url.pathname.toLowerCase() != "/unathorized") {
+                        store.commonStore.navigation!('/unathorized');
                     }
                 }
             });

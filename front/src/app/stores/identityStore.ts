@@ -38,7 +38,7 @@ export default class IdentityStore {
         if (token) {            
             //получаем Identity
             const identity = await agent.Identity.identity(token);
-            if (identity.isSuccess) {
+            if (identity && identity.isSuccess) {
                 runInAction(() => store.identityStore.identity = identity.result);
                 return identity.result;
             } else {

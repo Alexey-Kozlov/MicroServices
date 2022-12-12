@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json.Linq;
 using System.Security.Claims;
 using System.Security.Principal;
 
@@ -37,6 +38,9 @@ namespace Identity.Controllers
         [HttpGet("CurrentUser")]
         public async Task<ActionResult<ResponseDTO>> GetCurrentUser()
         {
+            var identityModel = new IdentityModel();
+            identityModel.token = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", string.Empty);
+            var ss = CheckToken(identityModel);
             var user = await _userManager.Users
                 .FirstOrDefaultAsync(p => p.UserName == User.FindFirstValue(ClaimTypes.Name));
             if (user == null)

@@ -5,6 +5,7 @@ import { ILogin } from '../models/ilogin';
 import { IProduct } from '../models/iproduct';
 import { ResponseResult } from '../models/responseResult';
 import { store } from '../stores/store';
+import { toast } from 'react-toastify';
 
 axios.interceptors.request.use(config => {
     const token = store.commonStore.token;
@@ -30,6 +31,10 @@ axios.interceptors.response.use(async response => {
             case 401:
                 navigate!('/unathorized');
                 break;
+            case 500:
+                let mes = getErrorText(data, error);
+                toast.error(getCustomexceptionMessage(mes));
+                break;
         }       
     }
     console.log("Agent error - " + error.stack);
@@ -41,7 +46,11 @@ const sleep = (delay: number) => {
         setTimeout(resolve, delay);
     });
 }
-
+const getCustomexceptionMessage = (data: string) => {
+    const begIndex = data.indexOf('was thrown.');
+    const endIndex = data.indexOf('HEADERS');
+    return data.substring(begIndex + 11, endIndex);
+}
 const getErrorText = (data: any, error: AxiosError) => {
     let errorText = '';
     let errorData: string[] = [];
@@ -68,17 +77,22 @@ const getErrorText = (data: any, error: AxiosError) => {
     }
     return errorText;
 }
-const responseBody = <T>(response: AxiosResponse<T>) => response.data;
+const responseBody = <T>(response: AxiosResponse<T>) => {
+    if (response) {
+        return response.data;
+    }
+    return null;
+}
 
 const Product = {
-    getProducts: () => axios.get<ResponseResult<IProduct[]>>(process.env.REACT_APP_PRODUCT_API! +
-        '/products').then(responseBody),
-    getProductById: (id: string) => axios.get<ResponseResult<IProduct>>(process.env.REACT_APP_PRODUCT_API! +
-        `/products/${id}`).then(responseBody),
-    addEdit: (product: IProduct) => axios.post<ResponseResult<IProduct>>(process.env.REACT_APP_PRODUCT_API! +
-        `/products`, { ...product }).then(responseBody),
-    delete: (id: number) => axios.delete<ResponseResult<IProduct>>(process.env.REACT_APP_PRODUCT_API! +
-        `/products/${id.toString()}`).then(responseBody)
+    getProducts: () => axios.get<IProduct[]>(process.env.REACT_APP_MAIN! +
+        '/api/product/getproductlist').then(responseBody),
+    getProductById: (id: string) => axios.get<IProduct>(process.env.REACT_APP_MAIN! +
+        `/api/product/${id}`).then(responseBody),
+    addEdit: (product: IProduct) => axios.post<IProduct>(process.env.REACT_APP_MAIN! +
+        `/api/product`, { ...product }).then(responseBody),
+    delete: (id: number) => axios.delete<IProduct>(process.env.REACT_APP_MAIN! +
+        `/api/product/${id.toString()}`).then(responseBody)
 
 }
 
@@ -100,6 +114,17 @@ const Identity = {
         const axInstance = axios.create({
             headers: {
                 Authorization: `Bearer ${token}`
+            }
+        });
+        axInstance.interceptors.response.use(async response => {
+            return response;
+        }, (error: AxiosError) => {
+            if (error.response) {
+                const { status } = error.response!;
+                const navigate = store.commonStore.navigation;
+                if (status == 401) {
+                    navigate!('/unathorized');
+                }
             }
         });
         return axInstance.get<ResponseResult<IIdentity>>(process.env.REACT_APP_IDENTITY! +

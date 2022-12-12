@@ -4,16 +4,11 @@ using Models;
 
 namespace ProductAPI.Core
 {
-    public class Mapping
-    { 
-        public static MapperConfiguration RegisterMaps()
+    public class Mapping : Profile
+    {
+        public Mapping()
         {
-            var mappingConfig = new MapperConfiguration(config =>
-            {
-                config.CreateMap<Product, ProductDTO>();
-                config.CreateMap<ProductDTO, Product>();
-            });
-            return mappingConfig;
+            CreateMap<Product, ProductDTO>().ReverseMap();
         }
     }
 }

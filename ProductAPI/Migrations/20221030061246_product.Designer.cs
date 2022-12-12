@@ -13,7 +13,7 @@ namespace ProductAPI.Migrations
 {
     [DbContext(typeof(AppDbContext))]
     [Migration("20221030061246_product")]
-    partial class product
+    partial class productClass
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

@@ -75,7 +75,7 @@ export default observer(function ProductForm() {
     useEffect(() => {
         if (id) {
             getProduct(id!).then((item) => {
-                reset(item);
+                item && reset(item);
             });
         }
     }, [id, getProduct, reset]);

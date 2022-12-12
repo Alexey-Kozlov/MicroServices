@@ -14,11 +14,11 @@ namespace MainAPI.Controllers
         [Route("home/login")]
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> Login()
+        public IActionResult Login()
         {
             var user = User.Identity;
 
-            return Ok("444");
+            return Ok();
         }
     }
 }

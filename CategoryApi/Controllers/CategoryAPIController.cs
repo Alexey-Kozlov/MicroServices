@@ -67,6 +67,8 @@ namespace CategoryAPI.Controllers
         }
 
         [HttpDelete]
+        [Authorize(Roles = "Admin")]
+        [Route("{id}")]
         public async Task<ResponseDTO> Delete(int id)
         {
             try

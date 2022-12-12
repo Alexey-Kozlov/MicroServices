@@ -22,7 +22,6 @@ namespace MIdentity
             {
                 if (string.IsNullOrEmpty(context.Request.Headers["Authorization"]))
                 {
-                    //context.Response.Redirect(_config["FrontUrl"]!);
                     context.Response.StatusCode = StatusCodes.Status401Unauthorized;
                     return;
                 }
@@ -30,19 +29,29 @@ namespace MIdentity
                 if (!context.Request.GetDisplayUrl().Contains(_config["FrontUrl"]!))
                 {
                     var token = context.Request.Headers["Authorization"].ToString().Replace("Bearer ", string.Empty);
-                    if (await _identityService.CheckToken(token))
+                    try
                     {
-                        var principal = _identityService.GetPrincipal(token!);
-                        if (principal != null)
+                        if (await _identityService.CheckToken(token))
                         {
-                            //валидный токен, получен пользователь
-                            context.User = principal;
+                            var principal = _identityService.GetPrincipal(token!);
+                            if (principal != null)
+                            {
+                                //валидный токен, получен пользователь
+                                context.User = principal;
+                            }
+                        }
+                        else
+                        {
+                            //ошибка с токеном - не валидный
+                            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                            return;
                         }
                     }
-                    else
+                    catch (UnauthorizedAccessException)
                     {
-                        //ошибка с токеном - не авторизован
-                        throw new HttpRequestException("Невалидный токен", new Exception(), HttpStatusCode.Unauthorized);
+                        //ошибка с токеном - не валидный
+                        context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                        return;
                     }
                 }
             }

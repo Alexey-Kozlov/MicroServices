@@ -29,7 +29,8 @@ namespace MIdentity
             {
                 ApiType = ApiType.Post,
                 Data = new IdentityModel { token = token },
-                Url = _config["IdentitySettings:IdentityUrlCheckToken"]!
+                Url = _config["IdentitySettings:IdentityUrlCheckToken"]!,
+                Token= token ?? ""
             }); ;
         }
         public ClaimsPrincipal? GetPrincipal(string token)

@@ -29,10 +29,10 @@ export default class ProductStore {
         try {
             const data = await agent.Product.getProducts();
             runInAction(() => {
-                data.result.forEach(product => {
+                data && data.forEach(product => {
                     this.productRegistry.set(product.id, product);
-                    this.setIsLoading(false);
                 });
+                this.setIsLoading(false);
             });
         } catch (error) {
             this.setIsLoading(false);
@@ -45,11 +45,13 @@ export default class ProductStore {
         try {
             const data = await agent.Product.getProductById(id);
             runInAction(() => {
-                this.productRegistry.set(data.result.id, data.result);
-                this.selectedProduct = data.result;
+                if (data) {
+                    this.productRegistry.set(data.id, data);
+                    this.selectedProduct = data;
+                }
                 this.setIsLoading(false);
             });
-            return data.result;
+            return data && data;
         } catch (error) {
             this.setIsLoading(false);
             return Promise.reject();
@@ -57,16 +59,16 @@ export default class ProductStore {
     }
 
     public addEditProduct = async (product: IProduct) => {
-        this.setIsSubmitted(true);
+        this.setIsLoading(true);
         try {
             const data = await agent.Product.addEdit(product);
             runInAction(() => {
-                this.productRegistry.set(data.result.id, data.result);
-                this.setIsSubmitted(false);
+                data && this.productRegistry.set(data.id, data);
+                this.setIsLoading(false);
             });
            
         } catch (error) {
-            this.setIsSubmitted(false);
+            this.setIsLoading(false);
             return Promise.reject();
         }
     }

@@ -22,7 +22,7 @@ export default class CategoryStore{
         try {
             const data = await agent.Category.getCategoryList();
             runInAction(() => {
-                data.forEach(category => {
+                data && data.forEach(category => {
                     this.categoryRegistry.set(category.id, category);
                     this.setIsLoading(false);
                 });
@@ -37,7 +37,7 @@ export default class CategoryStore{
         try {
             const category = await agent.Category.getCategoryById(id)
             runInAction(() => {
-                this.categoryRegistry.set(category.id, category);
+                category && this.categoryRegistry.set(category.id, category);
             });
             this.setIsLoading(false);
             return category;
@@ -51,7 +51,7 @@ export default class CategoryStore{
         try {
             const data = await agent.Category.addEdit(category);
             runInAction(() => {
-                this.categoryRegistry.set(data.id, data);
+               data &&  this.categoryRegistry.set(data.id, data);
             });
             this.setIsLoading(false);
         } catch (error) {

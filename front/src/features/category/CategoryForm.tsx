@@ -37,7 +37,7 @@ export default observer(function CategoryForm() {
     useEffect(() => {
         if (id) {
             getCategoryById(id).then((category) => {
-                reset(category);
+                category && reset(category);
             });
         }
     }, [id, reset, getCategoryById]);

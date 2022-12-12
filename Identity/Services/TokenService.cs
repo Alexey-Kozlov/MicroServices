@@ -42,7 +42,8 @@ namespace Identity.Services
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.Now.AddHours(Double.Parse(_config["TokenExpiresHours"])),
+                Expires = DateTime.UtcNow.AddHours(Double.Parse(_config["TokenExpiresHours"])),
+                //Expires = DateTime.UtcNow.AddMinutes(1),
                 SigningCredentials = cred
             };
 
@@ -93,14 +94,14 @@ namespace Identity.Services
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["TokenKey"]));
             var validationParameters =  new TokenValidationParameters()
             {
-                ValidateLifetime = false, 
+                ValidateLifetime = true, 
                 ValidateAudience = false, 
                 ValidateIssuer = false,   
                 IssuerSigningKey = key
             };
             SecurityToken validatedToken;
             tokenHandler.ValidateToken(token, validationParameters, out validatedToken);
-            if (validatedToken != null && validatedToken.ValidTo > DateTime.Now)
+            if (validatedToken != null && validatedToken.ValidTo > DateTime.UtcNow)
             {
                 return true;
             }

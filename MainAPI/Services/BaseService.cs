@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using System.Net.Mime;
 using System.Text;
 using System.Net.Http.Headers;
+using Common;
 
 namespace Services
 {
@@ -10,10 +11,10 @@ namespace Services
     {
         public ResponseDTO responseModel { get; set; }
         private readonly IHttpClientFactory _httpClient;
-        public BaseService(IHttpClientFactory httpClient) 
+        public BaseService(IHttpClientFactory httpClient)
         {
             this.responseModel = new ResponseDTO();
-            _httpClient= httpClient;
+            _httpClient = httpClient;
         }
 
         public async Task<T> SendAsync<T>(ApiRequest apiRequest)
@@ -41,17 +42,37 @@ namespace Services
                     case ApiType.Post:
                         message.Method = HttpMethod.Post;
                         break;
-                    case ApiType.Get: message.Method = HttpMethod.Get;
+                    case ApiType.Get:
+                        message.Method = HttpMethod.Get;
                         break;
-                    case ApiType.Delete: message.Method = HttpMethod.Delete;
+                    case ApiType.Delete:
+                        message.Method = HttpMethod.Delete;
                         break;
-                    default: message.Method = HttpMethod.Get;
+                    default:
+                        message.Method = HttpMethod.Get;
                         break;
                 }
-                HttpResponseMessage  apiResponse = await client.SendAsync(message);
+                HttpResponseMessage apiResponse = await client.SendAsync(message);
                 var apiContent = await apiResponse.Content.ReadAsStringAsync();
+                if (apiContent.Contains("Microsoft.IdentityModel.Tokens.SecurityTokenExpiredException"))
+                {
+                    throw new UnauthorizedAccessException("Невалидный токен");
+                }
+                if(apiContent.Contains("System.InvalidOperationException"))
+                {
+                    throw new InvalidOperationException("Ошибка операции");
+                }
                 var apiResponseDTO = JsonConvert.DeserializeObject<T>(apiContent);
                 return apiResponseDTO!;
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                throw new UnauthorizedAccessException("Невалидный токен", ex);
+            }
+            catch (InvalidOperationException)
+            {
+                //кастомная ошибка без вывода стека. Если нужен стек - пишем здесь в лог.
+                throw new CustomException("Ошибка выполнения операции");
             }
             catch (Exception ex)
             {

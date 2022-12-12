@@ -1,9 +1,9 @@
 ﻿using Models;
 using Newtonsoft.Json;
-using System.Net.Http.Headers;
 using System.Net.Mime;
 using System.Text;
-using System.Text.Unicode;
+using System.Net.Http.Headers;
+using Common;
 
 namespace Services
 {
@@ -13,7 +13,7 @@ namespace Services
         private readonly IHttpClientFactory _httpClient;
         public BaseService(IHttpClientFactory httpClient)
         {
-            responseModel = new ResponseDTO();
+            this.responseModel = new ResponseDTO();
             _httpClient = httpClient;
         }
 
@@ -54,8 +54,25 @@ namespace Services
                 }
                 HttpResponseMessage apiResponse = await client.SendAsync(message);
                 var apiContent = await apiResponse.Content.ReadAsStringAsync();
+                if (apiContent.Contains("Microsoft.IdentityModel.Tokens.SecurityTokenExpiredException"))
+                {
+                    throw new UnauthorizedAccessException("Невалидный токен");
+                }
+                if (apiContent.Contains("System.InvalidOperationException"))
+                {
+                    throw new InvalidOperationException("Ошибка операции");
+                }
                 var apiResponseDTO = JsonConvert.DeserializeObject<T>(apiContent);
                 return apiResponseDTO!;
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                throw new UnauthorizedAccessException("Невалидный токен", ex);
+            }
+            catch (InvalidOperationException)
+            {
+                //кастомная ошибка без вывода стека. Если нужен стек - пишем здесь в лог.
+                throw new CustomException("Ошибка выполнения операции");
             }
             catch (Exception ex)
             {

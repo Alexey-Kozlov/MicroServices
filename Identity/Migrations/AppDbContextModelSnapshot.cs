@@ -123,6 +123,7 @@ namespace Identity.Migrations
                         .HasDatabaseName("IX_RefreshToken_Id");
 
                     b.HasIndex("UserId")
+                        .IsUnique()
                         .HasDatabaseName("IX_RefreshToken_UserId");
 
                     b.ToTable("RefreshToken", (string)null);
@@ -263,8 +264,8 @@ namespace Identity.Migrations
             modelBuilder.Entity("Identity.Models.RefreshToken", b =>
                 {
                     b.HasOne("Identity.Models.ApplicationUser", "User")
-                        .WithMany("RefreshTokens")
-                        .HasForeignKey("UserId")
+                        .WithOne("RefreshTokens")
+                        .HasForeignKey("Identity.Models.RefreshToken", "UserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 

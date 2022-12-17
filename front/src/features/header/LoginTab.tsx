@@ -1,7 +1,7 @@
-﻿import { Tab, Tabs } from "@mui/material";
+import { Tab, Tabs } from "@mui/material";
 import { observer } from "mobx-react-lite";
 import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import agent from "../../app/api/agent";
 import { IIdentity } from "../../app/models/identity";
 import { store } from "../../app/stores/store";
@@ -11,31 +11,31 @@ interface prop {
 }
 
 export default observer(function LoginTab({ theme }: prop) {
-    const {identity,isLoggedIn } = store.identityStore;
+    const { isLoggedIn, identity, refreshToken } = store.identityStore;
     const [_identity, setIdentity] = useState<IIdentity>();
     const url = useLocation();
+    const navigate = useNavigate();
     useEffect(() => {
         if (isLoggedIn) {
-            setIdentity(identity!)
+            agent.Identity.refreshToken()!.then((token) => {
+                setIdentity(token!.result);
+                window.localStorage.setItem(process.env.REACT_APP_TOKEN_NAME!, token!.result.token);
+            });                        
+            if (url.pathname.toLowerCase() === "/unathorized") {
+                navigate('/');
+            }
         } else {
-            store.identityStore.getIdentity().then((identity) => {
-                if (identity) {
-                    setIdentity(identity!);
-                    if (url.pathname.toLowerCase() === "/unathorized") {
-                        store.commonStore.navigation!('/');
-                    }
-                } else {
-                    if (url.pathname.toLowerCase() != "/unathorized") {
-                        store.commonStore.navigation!('/unathorized');
-                    }
-                }
-            });
+            if (window.localStorage.getItem(process.env.REACT_APP_TOKEN_NAME!) && url.pathname.toLowerCase() !== "/unathorized") {
+                refreshToken();            
+            }
         }
-    }, [setIdentity]);
+    }, [setIdentity, url.pathname, identity, isLoggedIn, navigate, refreshToken]);
+
+
 
     const handleLogout = () => {
         store.identityStore.logout()
-            .then(() => store.commonStore.navigation!('/'))
+            .then(() => navigate('/'))
             .catch(error => alert(error));
     }
     const getActiveTab = () => {
@@ -59,4 +59,6 @@ export default observer(function LoginTab({ theme }: prop) {
             
         </Tabs>        
     )
+
+
 })

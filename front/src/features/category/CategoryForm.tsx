@@ -1,20 +1,20 @@
-﻿import { Button, CircularProgress, Container, TextField, ThemeProvider, Typography } from "@mui/material";
+import { Button, CircularProgress, Container, TextField, ThemeProvider, Typography } from "@mui/material";
 import Grid2 from "@mui/material/Unstable_Grid2";
 import { Controller, useForm } from "react-hook-form";
 import InputTheme from "../../app/themes/InputTheme";
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as Yup from 'yup';
 import HeaderTheme from "../header/headerTheme";
-import { store, useStore } from "../../app/stores/store";
+import { useStore } from "../../app/stores/store";
 import { Category, ICategory } from "../../app/models/icategory";
-import { useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
-import agent from "../../app/api/agent";
+import { useNavigate, useParams } from "react-router-dom";
+import { useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import { grey } from "@mui/material/colors";
 
 export default observer(function CategoryForm() {
     let { id } = useParams<{ id: string }>();
+    const navigate = useNavigate();
     const validSchema = Yup.object().shape({
         name: Yup.string().required('Необходимо указать наименование!'),
     });
@@ -28,7 +28,7 @@ export default observer(function CategoryForm() {
             id = "0";
         } 
         addEditCategory(new Category(Number(id), data.name)).then(() => {
-            store.commonStore.navigation!('/category');
+            navigate('/category');
         })
     });
     const labelStyle = {
@@ -71,7 +71,7 @@ export default observer(function CategoryForm() {
                         <Grid2 container direction="row" justifyContent="center">
                             <Grid2>
                                 <Button variant="outlined" sx={{ marginRight: "10px" }}
-                                    onClick={() => store.commonStore.navigation!('/category')}>
+                                    onClick={() => navigate('/category')}>
                                     Отмена
                                 </Button>
                                 <Button type="submit" variant="outlined"

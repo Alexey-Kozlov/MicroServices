@@ -15,7 +15,6 @@ namespace Identity.Helpers
         }
         public async Task<UserDTO> CreateUserDTO(ApplicationUser user)
         {
-            await _tokenService.SetRefreshToken(user);
             return await Task.Run(() => new UserDTO
             {
                 DisplayName = user.DisplayName ?? "",

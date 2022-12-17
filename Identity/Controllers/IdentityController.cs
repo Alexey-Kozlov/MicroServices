@@ -40,7 +40,10 @@ namespace Identity.Controllers
         {
             var identityModel = new IdentityModel();
             identityModel.token = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", string.Empty);
-            var ss = CheckToken(identityModel);
+            if(!await CheckToken(identityModel))
+            {
+                return Unauthorized(_response);
+            }
             var user = await _userManager.Users
                 .FirstOrDefaultAsync(p => p.UserName == User.FindFirstValue(ClaimTypes.Name));
             if (user == null)
@@ -80,6 +83,17 @@ namespace Identity.Controllers
         public async Task<bool> CheckToken([FromBody]IdentityModel _data)
         {
             return await Task.FromResult(_tokenService.ValidateToken(_data.token));
+        }
+
+        [Authorize]
+        [HttpPost("RefreshToken")]
+        public async Task<ActionResult<ResponseDTO>> RefreshToken()
+        {
+            
+            var user = await _userManager.Users.FirstOrDefaultAsync(p => p.UserName == User.FindFirstValue(ClaimTypes.Name));
+            if (user == null) return Unauthorized();
+            _response.Result = await _userHelper.CreateUserDTO(user);
+            return Ok(_response);
         }
     }
 }

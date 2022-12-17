@@ -1,42 +1,45 @@
-﻿import { AppBar, Tab, Tabs, ThemeProvider, Toolbar } from "@mui/material";
+import { AppBar, Tab, Tabs, ThemeProvider, Toolbar } from "@mui/material";
 import HeaderTheme from "../header/headerTheme";
-import { useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 import LoginTab from "./LoginTab";
 import { useStore } from "../../app/stores/store";
 import { observer } from "mobx-react-lite";
-import { ToastContainer } from "react-toastify";
 
 export default observer(function Header() {
 
-    let currentMenu = {
-        tabNumber: 0
-    }
+
     const url = useLocation();
-    const checkUrl = (url_template: string) => {
-        if (url.pathname.toLowerCase().includes(url_template.toLowerCase()))
-            return url.pathname.toLowerCase();
-    }
 
-    const getActiveTab = (url: string) => {
-        currentMenu.tabNumber = 0;
-        switch (url.toLowerCase()) {
-            case "/":
-                currentMenu.tabNumber = 0;
-                break;
-            case checkUrl("/product"):
-                currentMenu.tabNumber = 1;
-                break;
-            case checkUrl("/category"):
-            case checkUrl("/addCategory"):
-                currentMenu.tabNumber = 2;
-                break;
+    useEffect(() => {
+        let currentMenu = {
+            tabNumber: 0
         }
-        return currentMenu;
-    }
+        const checkUrl = (url_template: string) => {
+            if (url.pathname.toLowerCase().includes(url_template.toLowerCase()))
+                return url.pathname.toLowerCase();
+        }
+        const getActiveTab = (url: string) => {
+            currentMenu.tabNumber = 0;
+            switch (url.toLowerCase()) {
+                case "/":
+                    currentMenu.tabNumber = 0;
+                    break;
+                case checkUrl("/products"):
+                    currentMenu.tabNumber = 1;
+                    break;
+                case checkUrl("/category"):
+                case checkUrl("/addCategory"):
+                    currentMenu.tabNumber = 2;
+                    break;
+            }
+            return currentMenu;
+        }
+        setTabState(getActiveTab(url.pathname).tabNumber);
+    }, [url.pathname]);
 
-    const _tabState = getActiveTab(url.pathname);
-    const [tabState, setTabState] = useState(_tabState.tabNumber);
+    const [tabState, setTabState] = useState(0);
+
     const { identityStore: { isLoggedIn } } = useStore();
     return (
         <ThemeProvider theme={HeaderTheme}>
@@ -44,9 +47,9 @@ export default observer(function Header() {
                 <Toolbar disableGutters>
                     {isLoggedIn &&
                         <Tabs value={tabState}>
-                            <Tab label="Главная" sx={HeaderTheme.typography.tab} href="/" />
-                            <Tab label="Продукты" sx={HeaderTheme.typography.tab} href="/products" />
-                            <Tab label="Категории" sx={HeaderTheme.typography.tab} href="/category" />
+                            <Tab label="Главная" sx={HeaderTheme.typography.tab} component={Link} to={"/"} />
+                            <Tab label="Продукты" sx={HeaderTheme.typography.tab} component={Link} to={"/products" } />
+                            <Tab label="Категории" sx={HeaderTheme.typography.tab} component={Link} to={"/category"} />
                         </Tabs>
                     }
                     <LoginTab theme={HeaderTheme.typography.tab } />

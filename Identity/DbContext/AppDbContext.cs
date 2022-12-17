@@ -1,5 +1,4 @@
-﻿using Identity.Configuration;
-using Identity.Models;
+﻿using Identity.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -16,11 +15,9 @@ namespace Identity.DbContexts
         {
         }
 
-        public DbSet<RefreshToken> RefreshToken { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
-            builder.ApplyConfiguration(new RefreshTokenConfiguration());
             base.OnModelCreating(builder);
         }
     }

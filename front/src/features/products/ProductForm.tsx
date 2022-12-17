@@ -1,20 +1,20 @@
-﻿import { Button, CircularProgress, Container, TextField, ThemeProvider, Typography } from "@mui/material";
+import { Button, CircularProgress, Container, TextField, ThemeProvider, Typography } from "@mui/material";
 import Grid2 from "@mui/material/Unstable_Grid2";
 import { Controller, useForm } from "react-hook-form";
 import InputTheme from "../../app/themes/InputTheme";
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as Yup from 'yup';
 import HeaderTheme from "../header/headerTheme";
-import { store, useStore } from "../../app/stores/store";
+import { useStore } from "../../app/stores/store";
 import { IProduct, Product } from "../../app/models/iproduct";
 import { useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { observer } from "mobx-react-lite";
-import { observe } from "mobx";
 import WaitingIndicator from "../../app/components/WaitingIndicator";
 import { grey } from "@mui/material/colors";
 
 export default observer(function ProductForm() {
+    const navigate = useNavigate();
     const validSchema = Yup.object().shape({
         name: Yup.string().required('Необходимо указать наименование!'),
         price: Yup.number().required('Необходимо указать цену!')
@@ -41,7 +41,7 @@ export default observer(function ProductForm() {
         } 
         addEditProduct(new Product(Number(id), data.name, data.price, data.description, data.categoryId, data.imageId))
             .then(() =>{
-                store.commonStore.navigation!('/products');
+                navigate('/products');
             });
     });
     const labelStyle = {
@@ -193,7 +193,7 @@ export default observer(function ProductForm() {
                             <Grid2 container direction="row" justifyContent="center">
                                 <Grid2>
                                     <Button variant="outlined" sx={{ marginRight: "10px" }}
-                                        onClick={() => store.commonStore.navigation!('/products')}>
+                                        onClick={() => navigate('/products')}>
                                     Отмена
                                     </Button>
                                     <Button type="submit" variant="outlined"

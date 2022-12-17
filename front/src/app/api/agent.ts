@@ -13,11 +13,11 @@ axios.interceptors.request.use(config => {
     return config;
 });
 
+
 axios.interceptors.response.use(async response => {
     //await sleep(1000);
     return response;
 }, (error: AxiosError) => {
-    const navigate = store.commonStore.navigation;
     if (error.response) {
         const { data, status, config } = error.response!;
         error.response!.data = getErrorText(data, error);
@@ -25,11 +25,13 @@ axios.interceptors.response.use(async response => {
         switch (status) {
             case 404:
                 if (config.method === 'get') {
-                    navigate!('/not-found');
+                    window.location.href='/not-found';
                 }
                 break;
             case 401:
-                navigate!('/unathorized');
+                window.localStorage.removeItem(process.env.REACT_APP_TOKEN_NAME!);
+                store.identityStore.clearIdentity();
+                window.location.href = '/unathorized';
                 break;
             case 500:
                 let mes = getErrorText(data, error);
@@ -41,11 +43,11 @@ axios.interceptors.response.use(async response => {
     return Promise.reject(error);
 });
 
-const sleep = (delay: number) => {
-    return new Promise((resolve) => {
-        setTimeout(resolve, delay);
-    });
-}
+//const sleep = (delay: number) => {
+//    return new Promise((resolve) => {
+//        setTimeout(resolve, delay);
+//    });
+//}
 const getCustomexceptionMessage = (data: string) => {
     const begIndex = data.indexOf('was thrown.');
     const endIndex = data.indexOf('HEADERS');
@@ -110,7 +112,8 @@ const Category = {
 const Identity = {
     login: (login: ILogin) => axios.post<ResponseResult<IIdentity>>(process.env.REACT_APP_IDENTITY! +
             '/login', { ...login }).then(responseBody),
-    identity: (token: string) => {
+    getIdentity: () => {
+        const token = window.localStorage.getItem(process.env.REACT_APP_TOKEN_NAME!);
         const axInstance = axios.create({
             headers: {
                 Authorization: `Bearer ${token}`
@@ -121,22 +124,47 @@ const Identity = {
         }, (error: AxiosError) => {
             if (error.response) {
                 const { status } = error.response!;
-                const navigate = store.commonStore.navigation;
-                if (status == 401) {
-                    navigate!('/unathorized');
+                if (status === 401) {                    
+                    window.location.href = '/unathorized';
                 }
             }
         });
         return axInstance.get<ResponseResult<IIdentity>>(process.env.REACT_APP_IDENTITY! +
             '/CurrentUser').then(responseBody);
     },
+
     test: () => {
         return axios.get<ResponseResult<object>>(process.env.REACT_APP_MAIN! + '/home/login').then(responseBody)
     },
+
     register: (user: IIdentity) => axios.post<ResponseResult<IIdentity>>(process.env.REACT_APP_IDENTITY! +
-        '/register', user).then(responseBody),    
-    refreshToken: () => axios.post<ResponseResult<IIdentity>>(process.env.REACT_APP_IDENTITY! +
-        '/refreshToken', {}).then(responseBody)
+        '/register', user).then(responseBody),   
+    
+    refreshToken: () => {
+        const token = window.localStorage.getItem(process.env.REACT_APP_TOKEN_NAME!);
+        if (token) {
+            const axInstance = axios.create({
+                headers: {
+                    Authorization: `Bearer ${token!}`
+                }
+            });
+            axInstance.interceptors.response.use(async response => {
+                return response;
+            }, (error: AxiosError) => {
+                if (error.response) {
+                    const { status } = error.response!;
+                    if (status === 401) {
+                        window.localStorage.removeItem(process.env.REACT_APP_TOKEN_NAME!);
+                        store.identityStore.clearIdentity();
+                        window.location.href = '/unathorized';
+                    }
+                }
+            });
+            return axInstance.post<ResponseResult<IIdentity>>(process.env.REACT_APP_IDENTITY! +
+                '/refreshToken', {}).then(responseBody)
+        }
+        return null;
+    }
 }
 
 const agent = {

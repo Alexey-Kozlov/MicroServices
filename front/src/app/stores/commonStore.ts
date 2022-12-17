@@ -1,27 +1,22 @@
-import { NavigateFunction } from 'react-router-dom';
 import { makeAutoObservable, reaction } from 'mobx';
 
 export default class CommonStore {
-    navigation: NavigateFunction | undefined;
-    token: string | null = window.localStorage.getItem('jwt');
+    token: string | null = window.localStorage.getItem(process.env.REACT_APP_TOKEN_NAME!);
 
     constructor() {
         makeAutoObservable(this);
         reaction(() => this.token, token => {
             if (token) {
-                window.localStorage.setItem('jwt', token!);
+                this.setToken(token);
             } else {
-                window.localStorage.removeItem('jwt');
+                window.localStorage.removeItem(process.env.REACT_APP_TOKEN_NAME!);
             }
         });
     }
 
-    setNavigation = (navigation: NavigateFunction) => {
-        this.navigation = navigation;
-    }
-
     setToken = (token: string | null) => {
         this.token = token;
+        window.localStorage.setItem(process.env.REACT_APP_TOKEN_NAME!, token!);
     }
 }
 

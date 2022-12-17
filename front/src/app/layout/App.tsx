@@ -1,7 +1,5 @@
-﻿import './App.css';
-import { Route, Routes, useNavigate } from 'react-router-dom';
-import { useEffect } from 'react';
-import { store, useStore } from '../stores/store';
+import './App.css';
+import { Route, Routes } from 'react-router-dom';
 import { observer } from 'mobx-react-lite';
 import ProductMain from '../../features/products/ProductMain';
 import ProductForm from '../../features/products/ProductForm';
@@ -14,12 +12,6 @@ import { ToastContainer } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
 
 export default observer(function App() {
-    const navigation = useNavigate();
-
-    useEffect(() => {
-        store.commonStore.setNavigation(navigation);
-    });
-
   return (
       <>
           <ToastContainer position='bottom-right' hideProgressBar />

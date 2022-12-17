@@ -1,12 +1,14 @@
-﻿import { Button, Container, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
+import { Button, Container, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 import { observer } from "mobx-react-lite";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import ConfirmDialog from "../../app/components/ConfirmDialog";
 import EditButtons from "../../app/components/EditButtons";
-import { store, useStore } from "../../app/stores/store";
+import { useStore } from "../../app/stores/store";
 
 export default observer(function CategoryMain() {
     const { categoryStore: { getCategoryList, categoryRegistry, deleteCategory } } = useStore();
+    const navigate = useNavigate();
     const confirmObject = {
         text: "",
         id: 0
@@ -18,7 +20,7 @@ export default observer(function CategoryMain() {
     }, [getCategoryList]);
 
     const handleEditButton = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, id: number) => {
-        store.commonStore.navigation!(`/category/${id}`);
+        navigate(`/category/${id}`);
     }
     const handleDeleteButton = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, id: number, name: string) => {
         confirmObject.id = id;

@@ -1,13 +1,15 @@
-﻿import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react-lite";
 import { Button, Container, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 import { useEffect, useState } from "react";
-import { store, useStore } from "../../app/stores/store";
+import { useStore } from "../../app/stores/store";
 import EditButtons from "../../app/components/EditButtons";
 import ConfirmDialog from "../../app/components/ConfirmDialog";
 import WaitingIndicator from "../../app/components/WaitingIndicator";
+import { useNavigate } from "react-router-dom";
 
 export default observer(function ProductMain() {
     const { productStore: { productRegistry, getProducts, deleteProduct, isLoading } } = useStore();
+    const navigate = useNavigate();
     const confirmObject = {
         text: "",
         id: 0
@@ -20,7 +22,7 @@ export default observer(function ProductMain() {
     const [confirmObj, setConfirmObj] = useState<typeof confirmObject>(confirmObject);
 
     const handleEditButton = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, id: number) => {
-        store.commonStore.navigation!(`/product/${id}`);
+        navigate(`/product/${id}`);
     }
     const handleDeleteButton = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, id: number, name: string) => {
         confirmObject.id = id;

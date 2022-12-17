@@ -1,5 +1,4 @@
-﻿import { makeAutoObservable, runInAction } from "mobx";
-import { NavigateFunction, useNavigate } from "react-router-dom";
+import { makeAutoObservable, runInAction } from "mobx";
 import { IIdentity } from "../models/identity";
 import { store } from "./store";
 import agent from "../api/agent";
@@ -8,14 +7,14 @@ import agent from "../api/agent";
 export default class IdentityStore {
     identity: IIdentity | null = null;
     refreshTokenTimeout: any;
-    navigation: NavigateFunction | undefined;
 
     constructor() {
         makeAutoObservable(this);
     }
 
-    setNavigation = (navigation: NavigateFunction) => {
-        this.navigation = navigation;
+    clearIdentity = () => {
+        store.commonStore.setToken(null);
+        this.identity = null;
     }
 
     get isLoggedIn() {
@@ -27,26 +26,25 @@ export default class IdentityStore {
     }
 
     logout = async () => {
-        store.commonStore.setToken(null);
-        window.localStorage.removeItem('jwt');
-        this.identity = null;
+        window.localStorage.removeItem(process.env.REACT_APP_TOKEN_NAME!);
+        this.clearIdentity();
     }
 
     getIdentity = async () => {
         //обращаемся к сервису аутентификации для проверки токена
-        const token = window.localStorage.getItem('jwt');
-        if (token) {            
+        if (this.identity) {
+            return this.identity;
+        } else {
             //получаем Identity
-            const identity = await agent.Identity.identity(token);
+            const identity = await agent.Identity.getIdentity();
             if (identity && identity.isSuccess) {
-                runInAction(() => store.identityStore.identity = identity.result);
+                runInAction(() => this.identity = identity.result);
+                this.startRefreshTokenTimer(identity.result);
                 return identity.result;
             } else {
                 return null;
             }
-         
-        } 
-        return null;
+        }
     }
 
     //register = async (formValue: IUserFormValues) => {
@@ -63,27 +61,37 @@ export default class IdentityStore {
     //    }
     //}
 
-    //regreshToken = async () => {
-    //    this.stopRefreshTokenTimer();
-    //    try {
-    //        const user = await agent.Account.refreshToken();
-    //        runInAction(() => this.user = user);
-    //        store.commonStore.setToken(user.token);
-    //        this.startRefreshTokenTimer(user);
-    //    } catch (error) {
-    //        console.log(error);
-    //        return Promise.reject(error);
-    //    }
-    //}
+    refreshToken = async () => {    
+        try {
+            const identity = await agent.Identity.refreshToken();
+            runInAction(() => this.identity = identity!.result!);
+            store.commonStore.setToken(identity!.result!.token);
+            this.startRefreshTokenTimer(this.identity!);
+        } catch (error) {
+            console.log(error);
+            return Promise.reject(error);
+        }
+    }
 
-    //private startRefreshTokenTimer(user: IUser) {
-    //    const token = JSON.parse(atob(user.token.split('.')[1]));
-    //    const expires = new Date(token.exp * 1000);
-    //    const timeOut = expires.getTime() - Date.now() - (30 * 1000); //начать обновлять токен за 30 секунд до его истечения
-    //    this.refreshTokenTimeout = setTimeout(this.regreshToken, timeOut);
-    //}
+    public startRefreshTokenTimer(identity: IIdentity) {
+        if (this.refreshTokenTimeout) {
+            this.stopRefreshTokenTimer();
+        }
+        store.commonStore.setToken(identity.token);
+        const token = JSON.parse(atob(identity.token.split('.')[1]));
+        const expires = new Date(token.exp * 1000);
+        let timeOut = 0;
+        //если параметр REACT_APP_BREAK_INAVTIVITY == true - означает прервать сессию после истечения срока действия токена и послать на логин
+        //если параметр REACT_APP_BREAK_INAVTIVITY != true - означает за 30 сек.дл истечения срока действия токена послать запрос на его обновление
+        if (process.env.REACT_APP_BREAK_INAVTIVITY === 'true') {
+            timeOut = expires.getTime() - Date.now() + (5 * 1000); //начать проверять токен через 5 секунд после его истечения
+        } else {
+            timeOut = expires.getTime() - Date.now() - (30 * 1000); //начать обновлять токен за 30 секунд до его истечения
+        }
+        this.refreshTokenTimeout = setTimeout(this.refreshToken, timeOut);
+    }
 
-    //private stopRefreshTokenTimer() {
-    //    clearTimeout(this.refreshTokenTimeout);
-    //}
+    private stopRefreshTokenTimer() {
+        clearTimeout(this.refreshTokenTimeout);
+    }
 }

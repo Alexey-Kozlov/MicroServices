@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ProductAPI.Configurations;
 using ProductAPI.Domain;
-using System.Diagnostics;
 
 namespace ProductAPI.Persistance
 {

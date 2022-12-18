@@ -47,20 +47,6 @@ export default class IdentityStore {
         }
     }
 
-    //register = async (formValue: IUserFormValues) => {
-    //    try {
-    //        const user = await agent.Account.register(formValue);
-    //        store.commonStore.setToken(user.token);
-    //        this.startRefreshTokenTimer(user);
-    //        runInAction(() => this.user = user);
-    //        this.navigation!("/activities");
-    //        store.modalStore.closeModal();
-    //    } catch (error) {
-    //        console.log(error);
-    //        throw error;
-    //    }
-    //}
-
     refreshToken = async () => {    
         try {
             const identity = await agent.Identity.refreshToken();

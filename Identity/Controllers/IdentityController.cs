@@ -88,12 +88,45 @@ namespace Identity.Controllers
         [Authorize]
         [HttpPost("RefreshToken")]
         public async Task<ActionResult<ResponseDTO>> RefreshToken()
-        {
-            
+        {            
             var user = await _userManager.Users.FirstOrDefaultAsync(p => p.UserName == User.FindFirstValue(ClaimTypes.Name));
             if (user == null) return Unauthorized();
             _response.Result = await _userHelper.CreateUserDTO(user);
             return Ok(_response);
+        }
+
+        [HttpPost("Register")]
+        public async Task<ActionResult<ResponseDTO>> Register([FromBody]RegisterDTO registerDTO)
+        {
+            if (await _userManager.Users.AnyAsync(p => p.UserName == registerDTO.Login))
+            {
+                return BadRequest("Логин уже используется. Выберите другой Login");
+            }
+            var newUser = new ApplicationUser
+            {
+                UserName = registerDTO.Login,
+                DisplayName = registerDTO.DisplayName
+            };
+            var result = _userManager.CreateAsync(newUser, registerDTO.Password);
+            if (result.Result.Succeeded)
+            {
+                //добавление роли User для нового пользователя
+                var userRole = await _roleManager.FindByNameAsync("User");
+                if (userRole != null)
+                {
+                    await _userManager.AddToRoleAsync(newUser, userRole.Name);
+                }
+                _response.Result = await _userHelper.CreateUserDTO(newUser);
+                return Ok(_response);
+            }
+            var error = "";
+            foreach (var er in result.Result.Errors)
+            {
+                error += er.Description + ", ";
+            }
+            _response.IsSuccess = false;
+            _response.Errors = new List<string>() { "Ошибка создания нового пользователя - " + error };
+            return BadRequest(_response);
         }
     }
 }

@@ -19,7 +19,7 @@ export default observer(function LoginTab({ theme }: prop) {
         if (isLoggedIn) {
             agent.Identity.refreshToken()!.then((token) => {
                 setIdentity(token!.result);
-                window.localStorage.setItem(process.env.REACT_APP_TOKEN_NAME!, token!.result.token);
+                store.commonStore.setToken(token!.result.token);
             });                        
             if (url.pathname.toLowerCase() === "/unathorized") {
                 navigate('/');

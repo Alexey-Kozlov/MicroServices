@@ -7,10 +7,7 @@ export default createTheme({
                 root: {
                     width: "100%"
                 }
-            },
-            defaultProps: {
-                size: "small"
             }
-        }
+        }       
     }
 });

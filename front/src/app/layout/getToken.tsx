@@ -12,7 +12,6 @@ export default function GetToken() {
         //получили токен
         if (token) {
             store.commonStore.setToken(token);
-            window.localStorage.setItem(process.env.REACT_APP_TOKEN_NAME!, token);
             let url = "/";
             if (retUrl) {
                 url = url + retUrl;

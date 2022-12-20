@@ -8,7 +8,8 @@ namespace OrdersAPI.Core
     {
         public Mapping()
         {
-            CreateMap<Order, OrderDTO>().ReverseMap();
+            CreateMap<Order, OrderDTO>()
+                .ForMember(dest => dest.ProductId, opt => opt.MapFrom(src => src.ProductIdList.Select(p => p.ProductId)));
         }
     }
 }

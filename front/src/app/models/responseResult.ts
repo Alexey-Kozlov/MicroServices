@@ -1,5 +1,11 @@
+export interface IResponseResult<T> {
+    isSuccess: boolean;
+    errors: number[];
+    message: string;
+    result: T;
+}
 
-export class ResponseResult<T> {
+export class ResponseResult<T> implements IResponseResult<T> {
     isSuccess: boolean;
     errors: number[];
     message: string;

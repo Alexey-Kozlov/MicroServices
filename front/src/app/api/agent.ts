@@ -3,9 +3,11 @@ import { ICategory } from '../models/icategory';
 import { IIdentity } from '../models/identity';
 import { ILogin } from '../models/ilogin';
 import { IProduct } from '../models/iproduct';
-import { ResponseResult } from '../models/responseResult';
+import { IResponseResult, ResponseResult } from '../models/responseResult';
 import { store } from '../stores/store';
 import { toast } from 'react-toastify';
+import { IOrder } from '../models/iorder';
+import { PaginatedResult } from '../models/paginatedResult';
 
 axios.interceptors.request.use(config => {
     const token = store.commonStore.token;
@@ -16,6 +18,11 @@ axios.interceptors.request.use(config => {
 
 axios.interceptors.response.use(async response => {
     //await sleep(1000);
+    const pagination = response.headers['pagination'];
+    if (pagination) {
+        response.data = new PaginatedResult(response.data, JSON.parse(pagination));
+        return response as AxiosResponse<PaginatedResult<any>>;
+    }
     return response;
 }, (error: AxiosError) => {
     if (error.response) {
@@ -109,6 +116,19 @@ const Category = {
         `/api/category/${id.toString()}`).then(responseBody)
 }
 
+const Orders = {
+    getOrdersList: (params: URLSearchParams) => {
+        return axios.get<IResponseResult<PaginatedResult<IOrder[]>>>(process.env.REACT_APP_ORDER! +
+            '/api/orders/GetOrdersList', { params }).then(responseBody)
+    },
+    getOrderById: (id: string) => axios.get<IOrder>(process.env.REACT_APP_MAIN! +
+        `/api/orders/${id}`).then(responseBody),
+    addEdit: (order: IOrder) => axios.post<IOrder>(process.env.REACT_APP_MAIN! +
+        `/api/orders`, { ...order }).then(responseBody),
+    delete: (id: number) => axios.delete<IOrder>(process.env.REACT_APP_MAIN! +
+        `/api/orders/${id.toString()}`).then(responseBody)
+    }
+
 const Identity = {
     login: (login: ILogin) => axios.post<ResponseResult<IIdentity>>(process.env.REACT_APP_IDENTITY! +
             '/login', { ...login }).then(responseBody),
@@ -170,7 +190,8 @@ const Identity = {
 const agent = {
     Product,
     Category,
-    Identity
+    Identity,
+    Orders
 }
 
 export default agent;

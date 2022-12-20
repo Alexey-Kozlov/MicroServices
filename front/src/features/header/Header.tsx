@@ -32,6 +32,9 @@ export default observer(function Header() {
                 case checkUrl("/addCategory"):
                     currentMenu.tabNumber = 2;
                     break;
+                case checkUrl("/orders"):
+                    currentMenu.tabNumber = 3;
+                    break;
             }
             return currentMenu;
         }
@@ -50,6 +53,7 @@ export default observer(function Header() {
                             <Tab label="Главная" sx={HeaderTheme.typography.tab} component={Link} to={"/"} />
                             <Tab label="Продукты" sx={HeaderTheme.typography.tab} component={Link} to={"/products" } />
                             <Tab label="Категории" sx={HeaderTheme.typography.tab} component={Link} to={"/category"} />
+                            <Tab label="Заказы" sx={HeaderTheme.typography.tab} component={Link} to={"/orders"} />
                         </Tabs>
                     }
                     <LoginTab theme={HeaderTheme.typography.tab } />

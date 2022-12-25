@@ -15,6 +15,7 @@ namespace MainAPI.Controllers
         {
             _products = products;
         }
+
         [HttpGet("GetProductList")]
         public async Task<IActionResult> GetProductList()
         {
@@ -27,6 +28,7 @@ namespace MainAPI.Controllers
             }
             return Ok();
         }
+
         [HttpGet("{id}")]
         public async Task<IActionResult> GetProductById(int id)
         {
@@ -39,6 +41,7 @@ namespace MainAPI.Controllers
             }
             return Ok();
         }
+
         [HttpPost]
         public async Task<IActionResult> AddEditProduct([FromBody] ProductDTO product)
         {
@@ -51,6 +54,7 @@ namespace MainAPI.Controllers
             }
             return Ok();
         }
+
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProduct(int id)
         {

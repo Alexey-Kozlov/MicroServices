@@ -11,6 +11,7 @@ import UnAthorized from '../../features/identity/unathorized';
 import { ToastContainer } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
 import OrdersMain from '../../features/orders/ordersMain';
+import OrderForm from '../../features/orders/orderForm';
 
 export default observer(function App() {
   return (
@@ -28,6 +29,8 @@ export default observer(function App() {
               <Route path="/category/:id" element={<CategoryForm />}></Route>
               <Route path="/token" element={<GetToken />}></Route>
               <Route path="/orders" element={<OrdersMain />}></Route>
+              <Route path="/orders" element={<OrderForm />}></Route>
+              <Route path="/orders/:id" element={<OrderForm />}></Route>
           </Routes>
     </>
   );

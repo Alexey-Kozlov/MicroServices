@@ -1,8 +1,12 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using MainAPI.Common;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Models;
+using Newtonsoft.Json;
 using OrdersAPI.Core;
-using OrdersAPI.Services;
+using OrdersAPI.Repository;
+
 
 namespace OrdersAPI.Controllers
 {
@@ -10,21 +14,21 @@ namespace OrdersAPI.Controllers
     [Route("api/orders")]
     public class OrdersController : ControllerBase
     {
-        private readonly IOrdersService _ordersService;
+        private readonly IOrdersRepository _ordersRepository;
         protected ResponseDTO _response;
-        public OrdersController(IOrdersService ordersService)
+        public OrdersController(IOrdersRepository ordersRepository)
         {
-            _ordersService = ordersService;
+            _ordersRepository = ordersRepository;
             this._response = new ResponseDTO();
         }
 
         [HttpGet]
-        [Route("GetOrdersList")]
-        public async Task<ResponseDTO> GetOrdersList([FromQuery] OrdersPageParams pagingParams)
+        public async Task<ResponseDTO> Get([FromQuery] OrdersPageParams pagingParams)
         {
             try
             {
-                _response.Result = HandlePagedResult(await _ordersService.List(pagingParams));
+          
+                _response.Result = JsonConvert.SerializeObject(await _ordersRepository.List(pagingParams));
 
             }
             catch (Exception e)
@@ -35,13 +39,30 @@ namespace OrdersAPI.Controllers
             return _response;
         }
 
-        protected ActionResult HandlePagedResult(PagedList<OrderDTO> result)
+        [HttpGet]
+        [Route("{id}")]
+        public async Task<ResponseDTO> Get(int id)
         {
-            if (result == null) return NotFound();
+            try
+            {
+                _response.Result = await _ordersRepository.GetOrderById(id);
 
-            Response.AddPaginationHeader(result.CurrentPage, result.PageSize, result.TotalCount, result.TotalPages);
-            return Ok(result);
+            }
+            catch (Exception e)
+            {
+                _response.IsSuccess = false;
+                _response.Errors = new List<string>() { e.ToString() };
+            }
+            return _response;
         }
+
+        //protected ActionResult HandlePagedResult(PagedList<OrderDTO> result)
+        //{
+        //    if (result == null) return NotFound();
+
+        //    Response.AddPaginationHeader(result.CurrentPage, result.PageSize, result.TotalCount, result.TotalPages);
+        //    return Ok(result);
+        //}
 
     }
 }

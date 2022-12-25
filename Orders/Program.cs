@@ -3,7 +3,7 @@ using Microsoft.OpenApi.Models;
 using MIdentity;
 using OrdersAPI.Core;
 using OrdersAPI.Persistance;
-using OrdersAPI.Services;
+using OrdersAPI.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -20,7 +20,7 @@ builder.Services.AddCors(opt =>
         .AllowAnyMethod().AllowAnyHeader().AllowCredentials();
     });
 });
-builder.Services.AddScoped<IOrdersService,OrdersService>();
+builder.Services.AddScoped<IOrdersRepository,OrdersRepository>();
 builder.Services.Configure<OrdersPageSettings>(builder.Configuration.GetSection("OrdersPageSettings"));
 builder.Services.Configure<RolesPageSetting>(builder.Configuration.GetSection("RolesPageSetting"));
 builder.Services.AddControllers();

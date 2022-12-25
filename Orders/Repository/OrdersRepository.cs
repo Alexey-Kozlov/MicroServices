@@ -5,15 +5,15 @@ using Models;
 using OrdersAPI.Core;
 using OrdersAPI.Persistance;
 
-namespace OrdersAPI.Services
+namespace OrdersAPI.Repository
 {
-    public class OrdersService : IOrdersService
+    public class OrdersRepository : IOrdersRepository
     {
         private readonly AppDbContext _context;
         private readonly IMapper _mapper;
         private readonly ILogger _logger;
 
-        public OrdersService(AppDbContext context, IMapper mapper, ILogger<OrdersService> logger)
+        public OrdersRepository(AppDbContext context, IMapper mapper, ILogger<OrdersRepository> logger)
         {
             _context = context;
             _logger = logger;
@@ -31,6 +31,13 @@ namespace OrdersAPI.Services
                 query = query.Where(p => p.UserId == pagingParams.UserId);
             }
             return await PagedList<OrderDTO>.CreateAsync(query, pagingParams.PageNumber, pagingParams.PageSize);
+        }
+
+        public async Task<OrderDTO> GetOrderById(int orderId)
+        {
+            var order = await _context.Order
+                .Where(p => p.Id == orderId).FirstOrDefaultAsync();
+            return _mapper.Map<OrderDTO>(order);
         }
     }
 }

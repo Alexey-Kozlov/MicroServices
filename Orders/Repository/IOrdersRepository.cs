@@ -1,10 +1,11 @@
 ﻿using Models;
 using OrdersAPI.Core;
 
-namespace OrdersAPI.Services
+namespace OrdersAPI.Repository
 {
-    public interface IOrdersService
+    public interface IOrdersRepository
     {
         Task<PagedList<OrderDTO>> List(OrdersPageParams pagingParams);
+        Task<OrderDTO> GetOrderById(int orderId);
     }
 }

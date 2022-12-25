@@ -9,6 +9,7 @@ import { toast } from 'react-toastify';
 import { IOrder } from '../models/iorder';
 import { PaginatedResult } from '../models/paginatedResult';
 
+
 axios.interceptors.request.use(config => {
     const token = store.commonStore.token;
     if (token) config.headers!.Authorization = `Bearer ${token}`;
@@ -20,7 +21,7 @@ axios.interceptors.response.use(async response => {
     //await sleep(1000);
     const pagination = response.headers['pagination'];
     if (pagination) {
-        response.data = new PaginatedResult(response.data, JSON.parse(pagination));
+        response.data = new PaginatedResult(response.data.result, JSON.parse(pagination));
         return response as AxiosResponse<PaginatedResult<any>>;
     }
     return response;
@@ -58,7 +59,11 @@ axios.interceptors.response.use(async response => {
 const getCustomexceptionMessage = (data: string) => {
     const begIndex = data.indexOf('was thrown.');
     const endIndex = data.indexOf('HEADERS');
-    return data.substring(begIndex + 11, endIndex);
+    let errorText = data.substring(begIndex + 11, endIndex);
+    if (errorText.length > 500) {
+        errorText = errorText.substring(0, 500);
+    }
+    return errorText;
 }
 const getErrorText = (data: any, error: AxiosError) => {
     let errorText = '';
@@ -118,7 +123,7 @@ const Category = {
 
 const Orders = {
     getOrdersList: (params: URLSearchParams) => {
-        return axios.get<IResponseResult<PaginatedResult<IOrder[]>>>(process.env.REACT_APP_ORDER! +
+        return axios.get<PaginatedResult<IOrder[]>>(process.env.REACT_APP_MAIN! +
             '/api/orders/GetOrdersList', { params }).then(responseBody)
     },
     getOrderById: (id: string) => axios.get<IOrder>(process.env.REACT_APP_MAIN! +

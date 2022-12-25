@@ -1,6 +1,6 @@
 ﻿using Models;
 
-namespace Services
+namespace OrdersAPI.Services
 {
     public interface IBaseServise : IDisposable
     {

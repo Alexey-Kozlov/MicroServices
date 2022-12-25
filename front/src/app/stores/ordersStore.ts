@@ -1,6 +1,7 @@
 import { makeAutoObservable, reaction, runInAction } from 'mobx';
 import agent from '../api/agent';
 import { IOrder } from '../models/iorder';
+import { PaginatedResult } from '../models/paginatedResult';
 import PagingParams from '../models/pagingParams';
 import { store } from './store';
 
@@ -53,14 +54,14 @@ export default class OrdersStore {
         try {
             const data = await agent.Orders.getOrdersList(this.pageParams);
             runInAction(() => {
-                data && data.result.value.forEach(order => {
+                data && data.Items.forEach(order => {
                     this.ordersRegistry.set(order.id, order);
                 });
-                store.paging.setPagination(data!.result!.pagination);
+                store.paging.setPagination(data!.pagination);
 
             });
             this.setIsLoading(false);
-            return data!.result.value;
+            return data!.Items;
         } catch (error) {
             this.setIsLoading(false);
             return Promise.reject();

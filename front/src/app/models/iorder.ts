@@ -13,7 +13,7 @@ export class Order implements IOrder {
     description: string;
     productId: number[];
 
-    constructor(id: number = 0, name: string, orderDate: Date, userId: string, description: string, productId: number[]) {
+    constructor(id: number = 0, orderDate: Date, userId: string, description: string, productId: number[]) {
         this.id = id;
         this.orderDate = orderDate;
         this.userId = userId;

@@ -5,7 +5,7 @@ using System.Text;
 using System.Net.Http.Headers;
 using Common;
 
-namespace Services
+namespace OrdersAPI.Services
 {
     public class BaseService : IBaseServise
     {
@@ -13,7 +13,7 @@ namespace Services
         private readonly IHttpClientFactory _httpClient;
         public BaseService(IHttpClientFactory httpClient)
         {
-            this.responseModel = new ResponseDTO();
+            responseModel = new ResponseDTO();
             _httpClient = httpClient;
         }
 

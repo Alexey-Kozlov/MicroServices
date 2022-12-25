@@ -22,7 +22,7 @@ export default observer(function OrdersMain() {
     const [confirmObj, setConfirmObj] = useState<typeof confirmObject>(confirmObject);
 
     const handleEditButton = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, id: number) => {
-        navigate(`/product/${id}`);
+        navigate(`/orders/${id}`);
     }
     const handleDeleteButton = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, id: number, name: string) => {
         confirmObject.id = id;
@@ -57,7 +57,7 @@ export default observer(function OrdersMain() {
                                     }}>
                                         <TableCell >ID</TableCell>
                                         <TableCell >Дата</TableCell>
-                                        <TableCell >Продукты</TableCell>
+                                        <TableCell >Количество позиций</TableCell>
                                         <TableCell >Примечание</TableCell>
                                         <TableCell ></TableCell>
                                     </TableRow>
@@ -69,7 +69,7 @@ export default observer(function OrdersMain() {
                                         }}>
                                             <TableCell>{order.id}</TableCell>
                                             <TableCell>{order.orderDate.toString()}</TableCell>
-                                            <TableCell>{order.productId.join(',')}</TableCell>
+                                            <TableCell>{order.productId.length.toString()}</TableCell>
                                             <TableCell>{order.description}</TableCell>
                                             <TableCell>
                                                 <EditButtons

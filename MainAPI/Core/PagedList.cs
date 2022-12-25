@@ -1,8 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using System.Runtime.CompilerServices;
 
-namespace OrdersAPI.Core
+namespace MainAPI.Core
 {
     [JsonObject]
     public class PagedList<T>

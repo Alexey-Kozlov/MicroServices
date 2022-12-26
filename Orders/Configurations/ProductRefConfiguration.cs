@@ -9,7 +9,8 @@ namespace OrdersAPI.Configurations
         public void Configure(EntityTypeBuilder<ProductRef> builder)
         {
             builder.ToTable("ProductRef").HasKey(p => new { p.OrderId, p.ProductId }).HasName("PK_ProductRef_Key");
-            builder.HasOne(p => p.Order).WithMany(p => p.ProductIdList).HasForeignKey(p => p.OrderId).OnDelete(DeleteBehavior.Restrict);
+            builder.Property(p => p.Quantity).HasColumnName("Quantity");
+            builder.HasOne(p => p.Order).WithMany(p => p.Products).HasForeignKey(p => p.OrderId).OnDelete(DeleteBehavior.Restrict);
             builder.HasIndex(p => p.OrderId).HasDatabaseName("IX_ProductRef_OrderId");
             builder.HasIndex(p => p.ProductId).HasDatabaseName("IX_ProductRef_ProductId");
         }

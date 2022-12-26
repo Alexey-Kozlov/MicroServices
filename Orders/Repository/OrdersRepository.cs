@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
-using Models;
+using OrdersAPI.Models;
 using OrdersAPI.Core;
 using OrdersAPI.Persistance;
 
@@ -23,7 +23,7 @@ namespace OrdersAPI.Repository
         public async Task<PagedList<OrderDTO>> List(OrdersPageParams pagingParams)
         {
             var query = _context.Order
-                .Include(p => p.ProductIdList)
+                .Include(p => p.Products)
                 .ProjectTo<OrderDTO>(_mapper.ConfigurationProvider)
                 .AsQueryable();
             if(!string.IsNullOrEmpty(pagingParams.UserId))
@@ -33,11 +33,13 @@ namespace OrdersAPI.Repository
             return await PagedList<OrderDTO>.CreateAsync(query, pagingParams.PageNumber, pagingParams.PageSize);
         }
 
-        public async Task<OrderDTO> GetOrderById(int orderId)
+        public async Task<OrderDTO?> GetOrderById(int orderId)
         {
-            var order = await _context.Order
-                .Where(p => p.Id == orderId).FirstOrDefaultAsync();
-            return _mapper.Map<OrderDTO>(order);
+            return await _context.Order
+                .Include(p => p.Products)
+                .Where(p => p.Id == orderId)
+                .ProjectTo<OrderDTO>(_mapper.ConfigurationProvider)
+                .FirstOrDefaultAsync();
         }
     }
 }

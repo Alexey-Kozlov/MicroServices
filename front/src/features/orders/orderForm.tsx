@@ -6,7 +6,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as Yup from 'yup';
 import HeaderTheme from "../header/headerTheme";
 import { useStore } from "../../app/stores/store";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { observer } from "mobx-react-lite";
 import WaitingIndicator from "../../app/components/WaitingIndicator";
@@ -16,6 +16,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import 'dayjs/locale/ru';
 import { Unstable_DateField as DateField } from '@mui/x-date-pickers/DateField';
 import { IOrder, Order } from "../../app/models/iorder";
+import ProductList from "./productList";
 
 export default observer(function OrderForm() {
     const navigate = useNavigate();
@@ -24,7 +25,8 @@ export default observer(function OrderForm() {
         userId: Yup.number().required('Необходимо выбрать пользователя!'),
         productId: Yup.number().required('Необходимо указать продукт')
     });
-    const { orderStore: { addEditOrder, getOrder, isLoading, isSubmitted } } = useStore();
+    const { orderStore: { addEditOrder, getOrder, isLoading, isSubmitted, ordersRegistry } } = useStore();
+    const [order,setOrder] = useState<IOrder>();
     const { handleSubmit, control, formState: { errors }, reset } = useForm<IOrder>({
         defaultValues: new Order(0, new Date(),"","",[]),
         resolver: yupResolver(validSchema)
@@ -34,7 +36,7 @@ export default observer(function OrderForm() {
         if (!id) {
             id = "0";
         }
-        addEditOrder(new Order(Number(id), data.orderDate, data.userId, data.description, data.productId))
+        addEditOrder(new Order(Number(id), data.orderDate, data.userId, data.description, data.products))
             .then(() =>{
                 navigate('/orders');
             });
@@ -48,7 +50,10 @@ export default observer(function OrderForm() {
     useEffect(() => {
         if (id) {
             getOrder(id!).then((item) => {
-                item && reset(item);
+                if (item) {
+                    reset(item);
+                    setOrder(item);
+                } 
             });
         }
     }, [id, getOrder, reset]);
@@ -102,6 +107,11 @@ export default observer(function OrderForm() {
                                                 label="Примечание" />
                                         }
                                     />
+                                </Grid2>
+                            </Grid2>
+                            <Grid2 container direction="row" justifyContent="center" alignItems="center">
+                                <Grid2 xs={6}>
+                                    <ProductList order={order! } />
                                 </Grid2>
                             </Grid2>
                             <Grid2 container direction="row" justifyContent="center">

@@ -5,7 +5,7 @@ import { useStore } from "../../app/stores/store";
 import EditButtons from "../../app/components/EditButtons";
 import ConfirmDialog from "../../app/components/ConfirmDialog";
 import WaitingIndicator from "../../app/components/WaitingIndicator";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default observer(function OrdersMain() {
     const { orderStore: { ordersRegistry, getOrders, deleteOrder, isLoading } } = useStore();
@@ -69,7 +69,7 @@ export default observer(function OrdersMain() {
                                         }}>
                                             <TableCell>{order.id}</TableCell>
                                             <TableCell>{order.orderDate.toString()}</TableCell>
-                                            <TableCell>{order.productId.length.toString()}</TableCell>
+                                            <TableCell>{order.products.length.toString()}</TableCell>
                                             <TableCell>{order.description}</TableCell>
                                             <TableCell>
                                                 <EditButtons

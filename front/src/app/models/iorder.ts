@@ -1,9 +1,11 @@
+import { IProductItems } from "./iproductItems";
+
 export interface IOrder {
     id: number;
     orderDate: Date;
     userId: string;
     description: string;
-    productId: number[];
+    products: IProductItems[];
 }
 
 export class Order implements IOrder {
@@ -11,13 +13,13 @@ export class Order implements IOrder {
     orderDate: Date;
     userId: string;
     description: string;
-    productId: number[];
+    products: IProductItems[];
 
-    constructor(id: number = 0, orderDate: Date, userId: string, description: string, productId: number[]) {
+    constructor(id: number = 0, orderDate: Date, userId: string, description: string, products: IProductItems[]) {
         this.id = id;
         this.orderDate = orderDate;
         this.userId = userId;
         this.description = description;
-        this.productId = productId;
+        this.products = products;
     }
 }

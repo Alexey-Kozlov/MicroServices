@@ -71,15 +71,21 @@ export default class OrdersStore {
     public getOrder = async (id: string) => {
         this.setIsLoading(true);
         try {
-            const data = await agent.Orders.getOrderById(id);
-            runInAction(() => {
-                if (data) {
-                    this.ordersRegistry.set(data.id, data);
-                    this.selectedOrder = data;
-                }
-                this.setIsLoading(false);
-            });
-            return data && data;
+            if (!id) {
+                return undefined;
+            }
+            let data = this.ordersRegistry.get(Number.parseInt(id));
+            if (!data) {
+                data = await agent.Orders.getOrderById(id) || undefined;
+                runInAction(() => {
+                    if (data) {
+                        this.ordersRegistry.set(data.id, data);
+                        this.selectedOrder = data;
+                    }
+                });
+            }
+            this.setIsLoading(false);
+            return data;
         } catch (error) {
             this.setIsLoading(false);
             return Promise.reject();

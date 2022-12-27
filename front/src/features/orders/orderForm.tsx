@@ -25,7 +25,7 @@ export default observer(function OrderForm() {
         userId: Yup.number().required('Необходимо выбрать пользователя!'),
         productId: Yup.number().required('Необходимо указать продукт')
     });
-    const { orderStore: { addEditOrder, getOrder, isLoading, isSubmitted, ordersRegistry } } = useStore();
+    const { orderStore: { addEditOrder, getOrder, isLoading, isSubmitted } } = useStore();
     const [order,setOrder] = useState<IOrder>();
     const { handleSubmit, control, formState: { errors }, reset } = useForm<IOrder>({
         defaultValues: new Order(0, new Date(),"","",[]),
@@ -53,6 +53,7 @@ export default observer(function OrderForm() {
                 if (item) {
                     reset(item);
                     setOrder(item);
+
                 } 
             });
         }
@@ -111,7 +112,9 @@ export default observer(function OrderForm() {
                             </Grid2>
                             <Grid2 container direction="row" justifyContent="center" alignItems="center">
                                 <Grid2 xs={6}>
-                                    <ProductList order={order! } />
+                                    {order &&
+                                        <ProductList order={order!} />
+                                    }
                                 </Grid2>
                             </Grid2>
                             <Grid2 container direction="row" justifyContent="center">

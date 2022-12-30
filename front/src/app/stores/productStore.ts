@@ -2,10 +2,11 @@ import { IProduct } from '../models/iproduct';
 import { makeAutoObservable, runInAction } from 'mobx';
 import agent from '../api/agent';
 import { IOrder } from '../models/iorder';
+import { IProductItems } from '../models/iproductItems';
 
 export default class ProductStore {
     productRegistry = new Map<number, IProduct>();
-    productItems = new Map<number, { id: number, name: string, quantity: number }>();
+    productItems = new Map<number, { id: number,productId: number, name: string, quantity: number }>();
     selectedProduct: IProduct | undefined;
     isLoading: boolean = true;
     isSubmitted: boolean = false;
@@ -42,15 +43,12 @@ export default class ProductStore {
         }
     }
 
-    public getProduct = async (id: string) => {
-        if (!id) {
-            return undefined;
-        }
+    public getProduct = async (productId?: string) => {
         this.setIsLoading(true);
         try {
-            let data = this.productRegistry.get(Number.parseInt(id));
+            let data = this.productRegistry.get(Number.parseInt(productId!));
             if (!data) {
-                data = await agent.Product.getProductById(id) || undefined;
+                data = await agent.Product.getProductById(productId!) || undefined;
                 runInAction(() => {
                     if (data) {
                         this.productRegistry.set(data.id, data);
@@ -69,13 +67,42 @@ export default class ProductStore {
     public getProductItems = (order: IOrder) => {
         this.productItems.clear();
         order.products.forEach((product) => {
-            this.getProduct(product.id.toString()).then((item) => {
+            this.getProduct(product.productId.toString()).then((item) => {
                 runInAction(() => {
-                    this.productItems.set(item!.id, { id: item!.id, name: item!.name, quantity: product.quantity });
+                    this.productItems.set(product.id, { id: product.id, productId: item!.id, name: item!.name, quantity: product.quantity });
                 });
             });
         });
     }
+
+    public addUpdateProductItem = (item?: IProductItems) => {
+        if (!item) {
+            let minIdItem = this.getMinId(this.productItems);
+            let minProdIdItem = this.getMinId(this.productRegistry, false);
+            this.productItems.set(minIdItem, { id: minIdItem, productId: minProdIdItem, name: '', quantity: 0 });
+        } else {
+            this.getProduct(item.productId.toString()).then((_item) => {
+                runInAction(() => {
+                    this.productItems.set(item!.id, { id: item!.id, productId: item.productId, name: _item!.name, quantity: item.quantity });
+                });
+            });
+        }
+    };
+
+    public deleteProductItem = (id: number) => {
+        this.productItems.delete(id);
+    }
+
+    private getMinId = (items: Map<number, any>, nextId: boolean = true) => {
+        let minIdItem = Math.min(...[...items.keys()]);
+        if (nextId) {
+            if (minIdItem > 0) {
+                minIdItem = 0;
+            }
+            minIdItem = minIdItem - 1;
+        }
+        return minIdItem;
+    };
 
     public addEditProduct = async (product: IProduct) => {
         this.setIsLoading(true);

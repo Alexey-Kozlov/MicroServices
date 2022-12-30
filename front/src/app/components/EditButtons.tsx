@@ -4,16 +4,19 @@ import EditIcon from '@mui/icons-material/Edit';
 import { grey } from "@mui/material/colors";
 
 interface IEditButtons {
-    onClickEditButton: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
-    onClickDeleteButton: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+    onClickEditButton?: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+    onClickDeleteButton?: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+    showEdit?: boolean;
+    showDelete?: boolean;
 }
 
-export default function EditButtons({ onClickDeleteButton, onClickEditButton }: IEditButtons) {
+export default function EditButtons({ onClickDeleteButton, onClickEditButton,
+    showDelete = true, showEdit = true }: IEditButtons) {
 
     const buttonsStyle = {
         minWidth: "15px",
         padding: "0",
-        margin: "0",
+        margin: "0 5px 0 0",
         backgroundColor: "white",
         ".MuiSvgIcon-root:hover": {
             color: "white",
@@ -22,6 +25,7 @@ export default function EditButtons({ onClickDeleteButton, onClickEditButton }: 
         ".MuiButton-startIcon": {
             margin: "0"
         },
+
     }
 
     const iconStyle = {
@@ -30,13 +34,15 @@ export default function EditButtons({ onClickDeleteButton, onClickEditButton }: 
     }
     return (
         <>
-            <Button variant="contained" sx={buttonsStyle} style={{ marginRight: "5px" }}
+            <Button variant="contained" sx={buttonsStyle}
                 startIcon={<EditIcon color="info" sx={iconStyle} />}
-                onClick={(e) => onClickEditButton(e)}
+                style={showEdit !== true ? { display: "none" } : {}}
+                onClick={(e) => onClickEditButton ? onClickEditButton(e) : undefined}                
             />
             <Button variant="contained" sx={buttonsStyle}
                 startIcon={<DeleteIcon color="warning" sx={iconStyle} />}
-                onClick={(e) => onClickDeleteButton(e)}
+                style={showDelete !== true ? { display: "none" } : {}}
+                onClick={(e) => onClickDeleteButton ? onClickDeleteButton(e) : undefined}
             />
         </>
     )

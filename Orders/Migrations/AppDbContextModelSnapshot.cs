@@ -67,12 +67,22 @@ namespace OrdersAPI.Migrations
                     b.Property<int>("ProductId")
                         .HasColumnType("integer");
 
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("Id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
                     b.Property<decimal>("Quantity")
                         .HasColumnType("numeric")
                         .HasColumnName("Quantity");
 
                     b.HasKey("OrderId", "ProductId")
                         .HasName("PK_ProductRef_Key");
+
+                    b.HasIndex("Id")
+                        .HasDatabaseName("IX_ProductRef_Id");
 
                     b.HasIndex("OrderId")
                         .HasDatabaseName("IX_ProductRef_OrderId");
@@ -86,7 +96,7 @@ namespace OrdersAPI.Migrations
             modelBuilder.Entity("OrdersAPI.Domain.ProductRef", b =>
                 {
                     b.HasOne("OrdersAPI.Domain.Order", "Order")
-                        .WithMany("ProductIdList")
+                        .WithMany("Products")
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -96,7 +106,7 @@ namespace OrdersAPI.Migrations
 
             modelBuilder.Entity("OrdersAPI.Domain.Order", b =>
                 {
-                    b.Navigation("ProductIdList");
+                    b.Navigation("Products");
                 });
 #pragma warning restore 612, 618
         }

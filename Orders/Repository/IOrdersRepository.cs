@@ -6,6 +6,7 @@ namespace OrdersAPI.Repository
     public interface IOrdersRepository
     {
         Task<PagedList<OrderDTO>> List(OrdersPageParams pagingParams);
-        Task<OrderDTO?> GetOrderById(int orderId);
+        Task<OrderDTO> GetOrderById(int orderId);
+        Task<OrderDTO> CreateUpdateOrder(OrderDTO orderDto);
     }
 }

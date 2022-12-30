@@ -46,7 +46,6 @@ namespace OrdersAPI.Controllers
             try
             {
                 _response.Result = await _ordersRepository.GetOrderById(id);
-
             }
             catch (Exception e)
             {
@@ -55,14 +54,6 @@ namespace OrdersAPI.Controllers
             }
             return _response;
         }
-
-        //protected ActionResult HandlePagedResult(PagedList<OrderDTO> result)
-        //{
-        //    if (result == null) return NotFound();
-
-        //    Response.AddPaginationHeader(result.CurrentPage, result.PageSize, result.TotalCount, result.TotalPages);
-        //    return Ok(result);
-        //}
 
     }
 }

@@ -32,5 +32,15 @@ namespace MainAPI.Services
                 Token = token
             });
         }
+
+        public async Task<T> CreateModifyOrder<T>(int id, string token)
+        {
+            return await SendAsync<T>(new ApiRequest()
+            {
+                ApiType = ApiType.Get,
+                Url = _config["OrdersAPI"]! + "/api/orders/" + id.ToString(),
+                Token = token
+            });
+        }
     }
 }

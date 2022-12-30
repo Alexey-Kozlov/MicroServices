@@ -48,6 +48,23 @@ namespace MainAPI.Controllers
             return Ok();
         }
 
+        [HttpPost]
+        public async Task<ResponseDTO> Post([FromBody] OrderDTO orderDTO)
+        {
+            try
+            {
+                var accessToken = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", string.Empty);
+                _response.Result = await _categoryRepository.CreateUpdateCategory(categoryDTO);
+
+            }
+            catch (Exception e)
+            {
+                _response.IsSuccess = false;
+                _response.Errors = new List<string>() { e.ToString() };
+            }
+            return _response;
+        }
+
         protected ActionResult HandlePagedResult(PagedList<OrderDTO> result)
         {
             if (result == null) return NotFound();

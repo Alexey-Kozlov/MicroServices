@@ -36,33 +36,97 @@ namespace OrdersAPI.Repository
 
         public async Task<OrderDTO> GetOrderById(int orderId)
         {
-            return await _context.Order
+            var item = await _context.Order
                 .Include(p => p.Products)
                 .Where(p => p.Id == orderId)
                 .ProjectTo<OrderDTO>(_mapper.ConfigurationProvider)
-                .DefaultIfEmpty(new OrderDTO())
-                .FirstAsync();
+                .FirstOrDefaultAsync();
+            if (item != null)
+                return item;
+            return new OrderDTO();
         }
 
         public async Task<OrderDTO> CreateUpdateOrder(OrderDTO orderDto)
         {
             try
             {
-                var order = _mapper.Map<Order>(orderDto);
                 if (orderDto.Id == 0)
                 {
-                    _context.Order.Add(order);
+                    _context.Order.Add(_mapper.Map<Order>(orderDto));
                 }
                 else
                 {
-                    _context.Order.Update(order);
+                    var oldOrder = await _context.Order
+                        .Include(p => p.Products)
+                        .Where(p => p.Id == orderDto.Id)
+                        .FirstOrDefaultAsync();
+                    if (oldOrder != null)
+                    {
+                        oldOrder.OrderDate = orderDto.OrderDate;
+                        oldOrder.UserId= orderDto.UserId;
+                        oldOrder.Description= orderDto.Description;
+                        var existingProdId = new List<int>();
+                        var deletingProdId = new List<int>();
+                        foreach(var prod in orderDto.Products)
+                        {
+                            if(prod.Id < 0)
+                            {
+                                //это новая запрись
+                                oldOrder.Products.Add(new ProductRef
+                                {
+                                    ProductId = prod.ProductId,
+                                    OrderId = orderDto.Id,
+                                    Quantity = prod.Quantity
+                                });
+                            }
+                            else
+                            {
+                                //это редактирование имеющейся
+                                var _prod = oldOrder.Products.FirstOrDefault(p => p.Id == prod.Id);
+                                if (_prod != null)
+                                {
+                                    _prod.ProductId = prod.ProductId;
+                                    _prod.Quantity = prod.Quantity;
+                                }
+                                existingProdId.Add(prod.Id);
+                            }
+                        }
+                        //проверяем на удаление записей продуктов
+                        foreach(var item in oldOrder.Products)
+                        {
+                            if(!existingProdId.Any(p => p == item.Id) && item.Id != 0)
+                            {
+                                deletingProdId.Add(item.Id);
+                            }
+                        }
+                        foreach(var deletedId in deletingProdId)
+                        {
+                            oldOrder.Products.Remove(oldOrder.Products.FirstOrDefault(p => p.Id == deletedId)!);
+                        }
+                    }
                 }
                 await _context.SaveChangesAsync();
-                return _mapper.Map<OrderDTO>(order);
+                return orderDto;
             }
             catch (Exception e)
             {
                 throw new Exception("Ошибка добавления/обновления заказа", e);
+            }
+        }
+
+        public async Task<bool> DeleteOrder(int orderId)
+        {
+            try
+            {
+                var order = await _context.Order.FirstOrDefaultAsync(p => p.Id == orderId);
+                if (order == null) return false;
+                _context.Order.Remove(order!);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Ошибка удаления заказа", e);
             }
         }
     }

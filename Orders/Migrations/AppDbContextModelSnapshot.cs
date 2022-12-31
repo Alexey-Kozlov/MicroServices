@@ -61,12 +61,6 @@ namespace OrdersAPI.Migrations
 
             modelBuilder.Entity("OrdersAPI.Domain.ProductRef", b =>
                 {
-                    b.Property<int>("OrderId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("integer");
-
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
@@ -74,11 +68,17 @@ namespace OrdersAPI.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("OrderId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("integer");
+
                     b.Property<decimal>("Quantity")
                         .HasColumnType("numeric")
                         .HasColumnName("Quantity");
 
-                    b.HasKey("OrderId", "ProductId")
+                    b.HasKey("Id")
                         .HasName("PK_ProductRef_Key");
 
                     b.HasIndex("Id")
@@ -98,7 +98,7 @@ namespace OrdersAPI.Migrations
                     b.HasOne("OrdersAPI.Domain.Order", "Order")
                         .WithMany("Products")
                         .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Order");

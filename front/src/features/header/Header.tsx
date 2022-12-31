@@ -39,7 +39,7 @@ export default observer(function Header() {
             return currentMenu;
         }
         setTabState(getActiveTab(url.pathname).tabNumber);
-    }, [url.pathname]);
+    }, []);
 
     const [tabState, setTabState] = useState(0);
 

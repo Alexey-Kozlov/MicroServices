@@ -2,7 +2,7 @@
 using MIdentity;
 using System.IdentityModel.Tokens.Jwt;
 
-namespace MainAPI.Services
+namespace MainAPI.Core
 {
     public class Mapping
     {
@@ -18,7 +18,7 @@ namespace MainAPI.Services
                 .ForMember(dest => dest.DisplayName, opt => opt.MapFrom(src =>
                     src.Claims.Where(p => p.Type == "given_name").Select(p => p.Value).FirstOrDefault()))
                 .ForMember(dest => dest.Roles, opt => opt.MapFrom(src =>
-                    src.Claims.Where(p => p.Type == "role").Select(p => p.Value).ToList<string>()));
+                    src.Claims.Where(p => p.Type == "role").Select(p => p.Value).ToList()));
             });
             return mappingConfig;
         }

@@ -18,7 +18,7 @@ export default function GetToken() {
             }
             navigate(url);
         }
-    }, [searchParams, navigate]);
+    }, []);
     return (
         <p></p>
     )

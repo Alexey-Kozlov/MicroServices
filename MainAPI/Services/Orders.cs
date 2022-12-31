@@ -33,11 +33,22 @@ namespace MainAPI.Services
             });
         }
 
-        public async Task<T> CreateModifyOrder<T>(int id, string token)
+        public async Task<T> AddUpdateOrder<T>(OrderDTO order, string token)
         {
             return await SendAsync<T>(new ApiRequest()
             {
-                ApiType = ApiType.Get,
+                ApiType = ApiType.Post,
+                Url = _config["OrdersAPI"]! + "/api/orders",
+                Data = order,
+                Token = token
+            });
+        }
+
+        public async Task<T> DeleteOrder<T>(int id, string token)
+        {
+            return await SendAsync<T>(new ApiRequest()
+            {
+                ApiType = ApiType.Delete,
                 Url = _config["OrdersAPI"]! + "/api/orders/" + id.ToString(),
                 Token = token
             });

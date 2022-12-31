@@ -49,20 +49,16 @@ namespace MainAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<ResponseDTO> Post([FromBody] OrderDTO orderDTO)
+        public async Task<IActionResult> AddEditOrder([FromBody] OrderDTO order)
         {
-            try
+            var accessToken = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", string.Empty);
+            var response = await _orders.AddUpdateOrder<ResponseDTO>(order, accessToken!);
+            if (response != null && response.IsSuccess)
             {
-                var accessToken = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", string.Empty);
-                _response.Result = await _categoryRepository.CreateUpdateCategory(categoryDTO);
-
+                var rez = JsonConvert.DeserializeObject<OrderDTO>(Convert.ToString(response.Result)!);
+                return Ok(rez);
             }
-            catch (Exception e)
-            {
-                _response.IsSuccess = false;
-                _response.Errors = new List<string>() { e.ToString() };
-            }
-            return _response;
+            return Ok();
         }
 
         protected ActionResult HandlePagedResult(PagedList<OrderDTO> result)

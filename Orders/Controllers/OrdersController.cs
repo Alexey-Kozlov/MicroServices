@@ -1,12 +1,11 @@
 ﻿using MainAPI.Common;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Models;
 using Newtonsoft.Json;
 using OrdersAPI.Core;
 using OrdersAPI.Repository;
-
+using OrdersAPI.Models;
 
 namespace OrdersAPI.Controllers
 {
@@ -55,5 +54,38 @@ namespace OrdersAPI.Controllers
             return _response;
         }
 
+        [HttpPost]
+        public async Task<ResponseDTO> Post([FromBody] OrderDTO orderDTO)
+        {
+            try
+            {
+                _response.Result = await _ordersRepository.CreateUpdateOrder(orderDTO);
+
+            }
+            catch (Exception e)
+            {
+                _response.IsSuccess = false;
+                _response.Errors = new List<string>() { e.ToString() };
+            }
+            return _response;
+        }
+
+        [HttpDelete]
+        [Authorize(Roles = "Admin")]
+        [Route("{id}")]
+        public async Task<ResponseDTO> Delete(int id)
+        {
+            try
+            {
+                _response.IsSuccess = await _ordersRepository.DeleteOrder(id);
+
+            }
+            catch (Exception e)
+            {
+                _response.IsSuccess = false;
+                _response.Errors = new List<string>() { e.ToString() };
+            }
+            return _response;
+        }
     }
 }

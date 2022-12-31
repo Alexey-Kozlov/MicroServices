@@ -6,17 +6,20 @@ export default class CommonStore {
     constructor() {
         makeAutoObservable(this);
         reaction(() => this.token, token => {
-            if (token) {
-                this.setToken(token);
-            } else {
+            //if (token) {
+            //    this.setToken(token);
+            //} else {
+            //    window.localStorage.removeItem(process.env.REACT_APP_TOKEN_NAME!);
+            //}
+            if (!token) {
                 window.localStorage.removeItem(process.env.REACT_APP_TOKEN_NAME!);
             }
         });
     }
 
     setToken = (token: string | null) => {
-        this.token = token;
         window.localStorage.setItem(process.env.REACT_APP_TOKEN_NAME!, token!);
+        this.token = token;
     }
 }
 

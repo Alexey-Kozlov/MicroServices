@@ -25,21 +25,21 @@ export default observer(function Header() {
                 case "/":
                     currentMenu.tabNumber = 0;
                     break;
-                case checkUrl("/products"):
+                case checkUrl("/product"):
                     currentMenu.tabNumber = 1;
                     break;
                 case checkUrl("/category"):
                 case checkUrl("/addCategory"):
                     currentMenu.tabNumber = 2;
                     break;
-                case checkUrl("/orders"):
+                case checkUrl("/order"):
                     currentMenu.tabNumber = 3;
                     break;
             }
             return currentMenu;
         }
         setTabState(getActiveTab(url.pathname).tabNumber);
-    }, []);
+    }, [url.pathname]);
 
     const [tabState, setTabState] = useState(0);
 

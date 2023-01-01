@@ -37,7 +37,6 @@ axios.interceptors.response.use(async response => {
                 }
                 break;
             case 401:
-                window.localStorage.removeItem(process.env.REACT_APP_TOKEN_NAME!);
                 store.identityStore.clearIdentity();
                 window.location.href = '/unathorized';
                 break;
@@ -179,7 +178,6 @@ const Identity = {
                 if (error.response) {
                     const { status } = error.response!;
                     if (status === 401) {
-                        window.localStorage.removeItem(process.env.REACT_APP_TOKEN_NAME!);
                         store.identityStore.clearIdentity();
                         window.location.href = '/unathorized';
                     }

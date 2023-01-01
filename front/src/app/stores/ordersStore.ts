@@ -1,8 +1,6 @@
 import { makeAutoObservable, reaction, runInAction } from 'mobx';
 import agent from '../api/agent';
 import { IOrder } from '../models/iorder';
-import { IProductItems } from '../models/iproductItems';
-import { PaginatedResult } from '../models/paginatedResult';
 import PagingParams from '../models/pagingParams';
 import { store } from './store';
 
@@ -101,6 +99,7 @@ export default class OrdersStore {
             const data = await agent.Orders.addEdit(order);
             runInAction(() => {
                 data && this.ordersRegistry.set(data.id, data);
+                this.ordersRegistry.delete(0);
                 this.setIsLoading(false);
             });
            

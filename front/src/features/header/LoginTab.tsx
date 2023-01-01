@@ -19,7 +19,7 @@ export default observer(function LoginTab({ theme }: prop) {
         if (isLoggedIn) {
             agent.Identity.refreshToken()!.then((token) => {
                 setIdentity(token!.result);
-                store.commonStore.setToken(token!.result.token);
+                //store.commonStore.setToken(token!.result.token);
             });                        
             if (url.pathname.toLowerCase() === "/unathorized") {
                 navigate('/');
@@ -29,7 +29,7 @@ export default observer(function LoginTab({ theme }: prop) {
                 refreshToken();            
             }
         }
-    }, [setIdentity, url.pathname, identity, isLoggedIn, navigate, refreshToken]);
+    }, []);
 
 
 

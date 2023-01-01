@@ -9,7 +9,7 @@ import { ProductItems } from "../../app/models/iproductItems";
 import { useStore } from "../../app/stores/store";
 
 interface prop {
-    order: IOrder;
+    order?: IOrder;
 }
 export default observer(function ProductList({ order }: prop) {
     const { productStore: { getProductItems, productItems, addUpdateProductItem, getProducts,
@@ -17,9 +17,11 @@ export default observer(function ProductList({ order }: prop) {
 
     useEffect(() => {
         getProducts().then(() => {
-            getProductItems(order);
+            if (order) {
+                getProductItems(order);
+            }
         });
-    }, []);
+    }, [order]);
 
     const addProductItem = () => {
         addUpdateProductItem();

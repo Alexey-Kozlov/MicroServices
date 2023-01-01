@@ -6,6 +6,7 @@ import EditButtons from "../../app/components/EditButtons";
 import ConfirmDialog from "../../app/components/ConfirmDialog";
 import WaitingIndicator from "../../app/components/WaitingIndicator";
 import { Link, useNavigate } from "react-router-dom";
+import dayjs from "dayjs";
 
 export default observer(function OrdersMain() {
     const { orderStore: { ordersRegistry, getOrders, deleteOrder, isLoading } } = useStore();
@@ -22,7 +23,7 @@ export default observer(function OrdersMain() {
     const [confirmObj, setConfirmObj] = useState<typeof confirmObject>(confirmObject);
 
     const handleEditButton = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, id: number) => {
-        navigate(`/orders/${id}`);
+        navigate(`/order/${id}`);
     }
     const handleDeleteButton = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, id: number, name: string) => {
         confirmObject.id = id;
@@ -68,7 +69,7 @@ export default observer(function OrdersMain() {
                                             ":nth-of-type(odd)": { backgroundColor: "#F1F1F1" }
                                         }}>
                                             <TableCell>{order.id}</TableCell>
-                                            <TableCell>{order.orderDate.toString()}</TableCell>
+                                            <TableCell>{dayjs(order.orderDate).locale('ru').format('DD.MM.YYYY')}</TableCell>
                                             <TableCell>{order.products.length.toString()}</TableCell>
                                             <TableCell>{order.description}</TableCell>
                                             <TableCell>

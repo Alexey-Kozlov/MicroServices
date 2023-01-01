@@ -29,8 +29,8 @@ export default observer(function App() {
               <Route path="/category/:id" element={<CategoryForm />}></Route>
               <Route path="/token" element={<GetToken />}></Route>
               <Route path="/orders" element={<OrdersMain />}></Route>
-              <Route path="/orders" element={<OrderForm />}></Route>
-              <Route path="/orders/:id" element={<OrderForm />}></Route>
+              <Route path="/order" element={<OrderForm />}></Route>
+              <Route path="/order/:id" element={<OrderForm />}></Route>
           </Routes>
     </>
   );

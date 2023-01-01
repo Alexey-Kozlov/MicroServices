@@ -1,4 +1,4 @@
-import { Button, CircularProgress, Container, TextField, ThemeProvider, Typography } from "@mui/material";
+import { Button, CircularProgress, Container, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, TextField, ThemeProvider, Typography } from "@mui/material";
 import Grid2 from "@mui/material/Unstable_Grid2";
 import { Controller, useForm } from "react-hook-form";
 import InputTheme from "../../app/themes/InputTheme";
@@ -7,7 +7,7 @@ import * as Yup from 'yup';
 import HeaderTheme from "../header/headerTheme";
 import { useStore } from "../../app/stores/store";
 import { IProduct, Product } from "../../app/models/iproduct";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { observer } from "mobx-react-lite";
 import WaitingIndicator from "../../app/components/WaitingIndicator";
@@ -20,17 +20,16 @@ export default observer(function ProductForm() {
         price: Yup.number().required('Необходимо указать цену!')
             .typeError('Необходимо указать цену!')
             .moreThan(0, 'Необходимо указать цену больше 0!'),
-        categoryId: Yup.number().required('Необходимо указать категорию!')
-            .typeError('Необходимо указать категорию!')
-            .moreThan(0, 'Необходимо указать категорию больше 0!'),
+        categoryId: Yup.number().moreThan(0, 'Необходимо указать категорию!'),
         imageId: Yup.number().required('Необходимо указать изображение!')
             .typeError('Необходимо указать изображение!')
             .moreThan(0, 'Необходимо указать изображение больше 0!')
     });
-    const { productStore } = useStore();
+    const { productStore, categoryStore } = useStore();
     const { addEditProduct, getProduct, isLoading, isSubmitted } = productStore;
+    const { categoryRegistry, getCategoryList } = categoryStore;
 
-    const { handleSubmit, control, formState: { errors }, reset } = useForm<IProduct>({
+    const { handleSubmit, control, formState: { errors }, reset, setValue } = useForm<IProduct>({
         defaultValues: new Product(0, "", 0, "", 0, 0),
         resolver: yupResolver(validSchema)
     });
@@ -73,12 +72,18 @@ export default observer(function ProductForm() {
 
     //Вариант 3 - обычный вариант с промисом
     useEffect(() => {
-        if (id) {
-            getProduct(id!).then((item) => {
-                item && reset(item);
-            });
-        }
-    }, [id, getProduct, reset]);
+        getCategoryList().then(() => {
+            if (id) {
+                getProduct(id!).then((item) => {
+                    if (item) {
+                        reset(item);
+                    }
+                });
+            } else {
+                reset();
+            }
+        })
+    }, [id, getCategoryList, getProduct]);
 
     return (
         <ThemeProvider theme={InputTheme}>
@@ -141,11 +146,25 @@ export default observer(function ProductForm() {
                                         control={control}
                                         render={({ field }) =>
                                             <>
-                                                <TextField {...field}
-                                                    variant="outlined"
-                                                    type="number"
-                                                    label="Категория"
-                                                    error={errors.categoryId ? true : false} />
+                                                <FormControl size="small" variant="standard"
+                                                >
+                                                    <Select
+                                                        value={field.value.toString()}
+                                                        onChange={(e) => {
+                                                            setValue('categoryId', Number.parseInt(e.target.value));
+                                                            reset();
+                                                        }}
+                                                        error={errors.categoryId ? true : false}
+                                                    >
+                                                        {
+                                                            Array.from(categoryRegistry.values()).map(category => (
+                                                                <MenuItem
+                                                                    key={'category_' + category.id}
+                                                                    value={category.id}>{category.name}</MenuItem>
+                                                            ))
+                                                        }
+                                                    </Select>
+                                                </FormControl>
                                                 <Typography variant="inherit" sx={HeaderTheme.typography.errorMessage}>
                                                     {errors.categoryId?.message}
                                                 </Typography>

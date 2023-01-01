@@ -13,10 +13,10 @@ import WaitingIndicator from "../../app/components/WaitingIndicator";
 import { grey } from "@mui/material/colors";
 import { DesktopDatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import 'dayjs/locale/ru';
+import 'dayjs/locale/ru'; //русская локализация для адаптера
 import { IOrder, Order } from "../../app/models/iorder";
 import ProductList from "./productList";
-import { Dayjs } from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 
 export default observer(function OrderForm() {
     const navigate = useNavigate();
@@ -32,17 +32,13 @@ export default observer(function OrderForm() {
     });
 
     const onSubmit = handleSubmit(data => {
-        debugger;
         if (!id) {
             id = "0";
         }
-
         data.products = [];
         productItems.forEach((item) => {
             data.products.push(item);
         });
-
-        //const ddd = new Order(Number(id), data.orderDate, data.userId, data.description, data.products);
         addEditOrder(new Order(Number(id), data.orderDate, data.userId, data.description, data.products))
             .then(() =>{
                 navigate('/orders');
@@ -55,14 +51,18 @@ export default observer(function OrderForm() {
     let { id } = useParams<{ id: string }>();
   
     useEffect(() => {
+        //редактируем заказ
         if (id) {
             getOrder(id!).then((item) => {
                 if (item) {
                     reset(item);
                     setOrder(item);
 
-                } 
+                }
             });
+        } else {
+            //новый заказ
+            setOrder(new Order(0, dayjs().toDate(), '', '', []));
         }
     }, [id, getOrder]);
 
@@ -124,9 +124,10 @@ export default observer(function OrderForm() {
                             </Grid2>
                             <Grid2 container direction="row" justifyContent="center" alignItems="center">
                                 <Grid2 xs={6}>
-                                    {order &&
-                                        <ProductList order={order!} />
-                                    }
+                                        {
+                                            order ? <ProductList order={order} /> :
+                                                <ProductList  />
+                                        }                                                                            
                                 </Grid2>
                             </Grid2>
                             <Grid2 container direction="row" justifyContent="center">

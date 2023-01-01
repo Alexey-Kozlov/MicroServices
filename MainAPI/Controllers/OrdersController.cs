@@ -61,6 +61,19 @@ namespace MainAPI.Controllers
             return Ok();
         }
 
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteOrder(int id)
+        {
+            var accessToken = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", string.Empty);
+            var response = await _orders.DeleteOrder<ResponseDTO>(id, accessToken!);
+            if (response != null && response.IsSuccess)
+            {
+                var rez = JsonConvert.DeserializeObject<OrderDTO>(Convert.ToString(response.Result)!);
+                return Ok(rez);
+            }
+            return Ok();
+        }
+
         protected ActionResult HandlePagedResult(PagedList<OrderDTO> result)
         {
             if (result == null) return NotFound();

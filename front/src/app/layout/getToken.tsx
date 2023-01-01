@@ -12,11 +12,13 @@ export default function GetToken() {
         //получили токен
         if (token) {
             store.commonStore.setToken(token);
-            let url = "/";
-            if (retUrl) {
-                url = url + retUrl;
-            }
-            navigate(url);
+            store.identityStore.getIdentity().then(() => {
+                let url = "/";
+                if (retUrl) {
+                    url = url + retUrl;
+                }
+                navigate(url);
+            })
         }
     }, []);
     return (

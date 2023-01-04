@@ -16,10 +16,13 @@ export default observer(function LoginTab({ theme }: prop) {
     const url = useLocation();
     const navigate = useNavigate();
     useEffect(() => {
+        //если перенаправление на присваивание токена - отменяем логику
+        if (url.pathname.toLowerCase() === "/token") {
+            return;
+        }
         if (isLoggedIn) {
             agent.Identity.refreshToken()!.then((token) => {
                 setIdentity(token!.result);
-                //store.commonStore.setToken(token!.result.token);
             });                        
             if (url.pathname.toLowerCase() === "/unathorized") {
                 navigate('/');

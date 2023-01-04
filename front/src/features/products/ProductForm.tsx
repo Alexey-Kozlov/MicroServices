@@ -25,20 +25,20 @@ export default observer(function ProductForm() {
             .typeError('Необходимо указать изображение!')
             .moreThan(0, 'Необходимо указать изображение больше 0!')
     });
-    const { productStore, categoryStore } = useStore();
+    const { productStore, categoryStore, commonStore } = useStore();
     const { addEditProduct, getProduct, isLoading, isSubmitted } = productStore;
     const { categoryRegistry, getCategoryList } = categoryStore;
-
+    let { id } = useParams<{ id: string }>();
     const { handleSubmit, control, formState: { errors }, reset, setValue } = useForm<IProduct>({
-        defaultValues: new Product(0, "", 0, "", 0, 0),
+        defaultValues: new Product(0, "", 0, "", 0, "", 0),
         resolver: yupResolver(validSchema)
     });
 
     const onSubmit = handleSubmit(data => {
         if (!id) {
             id = "0";
-        } 
-        addEditProduct(new Product(Number(id), data.name, data.price, data.description, data.categoryId, data.imageId))
+        }
+        addEditProduct(new Product(Number(id), data.name, data.price, data.description, data.categoryId, data.categoryName, data.imageId))
             .then(() =>{
                 navigate('/products');
             });
@@ -47,7 +47,7 @@ export default observer(function ProductForm() {
         width: "130px"
     }
 
-    let { id } = useParams<{ id: string }>();
+
   
     //Вариант 1 - отлавливаем изменения через observer - обновляем форму редактирования, когда готовы данные
     //Здесь проблема - могут быть ложные срабатывания
@@ -150,12 +150,16 @@ export default observer(function ProductForm() {
                                                 >
                                                     <Select
                                                         value={field.value.toString()}
+                                                        displayEmpty
                                                         onChange={(e) => {
                                                             setValue('categoryId', Number.parseInt(e.target.value));
-                                                            reset();
+                                                            if (!id) {
+                                                                reset();
+                                                            }
                                                         }}
                                                         error={errors.categoryId ? true : false}
                                                     >
+                                                        <MenuItem value={0}>{commonStore.getResource('products','category_selector_empty_name')}</MenuItem>
                                                         {
                                                             Array.from(categoryRegistry.values()).map(category => (
                                                                 <MenuItem

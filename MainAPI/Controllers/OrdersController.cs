@@ -5,6 +5,7 @@ using Models;
 using Newtonsoft.Json;
 using MainAPI.Core;
 using System;
+using System.Net;
 
 namespace MainAPI.Controllers
 {
@@ -36,19 +37,24 @@ namespace MainAPI.Controllers
         }
 
         [HttpGet("{id}")]
+        [ProducesResponseType(typeof(OrderDTO), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> GetOrderById(int id)
         {
             var accessToken = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", string.Empty);
             var response = await _orders.GetOrderById<ResponseDTO>(id, accessToken!);
             if (response != null && response.IsSuccess)
             {
-                var rez = JsonConvert.DeserializeObject<OrderDTO>(Convert.ToString(response.Result)!);
-                return Ok(rez);
+                return Ok(JsonConvert.DeserializeObject<OrderDTO>(Convert.ToString(response.Result)!));
             }
-            return Ok();
+            return NotFound();
         }
 
         [HttpPost]
+        [ProducesResponseType(typeof(OrderDTO), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> AddEditOrder([FromBody] OrderDTO order)
         {
             var accessToken = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", string.Empty);
@@ -58,10 +64,13 @@ namespace MainAPI.Controllers
                 var rez = JsonConvert.DeserializeObject<OrderDTO>(Convert.ToString(response.Result)!);
                 return Ok(rez);
             }
-            return Ok();
+            return NotFound();
         }
 
         [HttpDelete("{id}")]
+        [ProducesResponseType(typeof(OrderDTO), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> DeleteOrder(int id)
         {
             var accessToken = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", string.Empty);
@@ -71,7 +80,7 @@ namespace MainAPI.Controllers
                 var rez = JsonConvert.DeserializeObject<OrderDTO>(Convert.ToString(response.Result)!);
                 return Ok(rez);
             }
-            return Ok();
+            return NotFound();
         }
 
         protected ActionResult HandlePagedResult(PagedList<OrderDTO> result)

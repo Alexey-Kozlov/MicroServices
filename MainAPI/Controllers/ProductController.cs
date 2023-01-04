@@ -20,10 +20,10 @@ namespace MainAPI.Controllers
         public async Task<IActionResult> GetProductList()
         {
             var accessToken = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", string.Empty);
-            var response = await _products.GetProductList<ResponseDTO>(accessToken!);
+            var response = await _products.GetProductList(accessToken!);
             if (response != null && response.IsSuccess)
             {
-                var rez = JsonConvert.DeserializeObject<List<ProductDTO>>(Convert.ToString(response.Result)!);
+                var rez = JsonConvert.DeserializeObject<List<ProductDTOFull>>(Convert.ToString(response.Result)!);
                 return Ok(rez);
             }
             return Ok();

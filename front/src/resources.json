@@ -1,0 +1,20 @@
+{
+  "resources":
+  [
+    {
+      "area": "products",
+      "name": {
+        "id": "category_selector_empty_name",
+        "value": "Выберите категорию"
+      }
+    },
+    {
+      "area": "category",
+      "name": {
+        "id": "111",
+        "value": "1111"
+      }
+    }
+  ]
+
+}

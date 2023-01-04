@@ -137,7 +137,7 @@ const Identity = {
     login: (login: ILogin) => axios.post<ResponseResult<IIdentity>>(process.env.REACT_APP_IDENTITY! +
             '/login', { ...login }).then(responseBody),
     getIdentity: () => {
-        const token = window.localStorage.getItem(process.env.REACT_APP_TOKEN_NAME!);
+        const token = store.commonStore.token;
         const axInstance = axios.create({
             headers: {
                 Authorization: `Bearer ${token}`
@@ -148,7 +148,7 @@ const Identity = {
         }, (error: AxiosError) => {
             if (error.response) {
                 const { status } = error.response!;
-                if (status === 401) {                    
+                if (status === 401) {        
                     window.location.href = '/unathorized';
                 }
             }
@@ -165,7 +165,7 @@ const Identity = {
         '/register', user).then(responseBody),   
     
     refreshToken: () => {
-        const token = window.localStorage.getItem(process.env.REACT_APP_TOKEN_NAME!);
+        const token = store.commonStore.token;
         if (token) {
             const axInstance = axios.create({
                 headers: {

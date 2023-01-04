@@ -72,7 +72,7 @@ export default observer(function ProductMain() {
                                             <TableCell>{product.id}</TableCell>
                                             <TableCell>{product.name}</TableCell>
                                             <TableCell>{product.price}</TableCell>
-                                            <TableCell>{product.categoryId}</TableCell>
+                                            <TableCell>{product.categoryName}</TableCell>
                                             <TableCell>{product.imageId}</TableCell>
                                             <TableCell>{product.description}</TableCell>
                                             <TableCell>

@@ -1,26 +1,17 @@
 ﻿using AutoMapper;
 using MIdentity;
+using Models;
 using System.IdentityModel.Tokens.Jwt;
+using System.Reflection.Metadata.Ecma335;
 
 namespace MainAPI.Core
 {
-    public class Mapping
+    public class Mapping : Profile
     {
-        public static MapperConfiguration RegisterMaps()
+        public Mapping()
         {
-            var mappingConfig = new MapperConfiguration(config =>
-            {
-                config.CreateMap<JwtSecurityToken, IdentityModel>()
-                .ForMember(dest => dest.UserName, opt => opt.MapFrom(src =>
-                    src.Claims.Where(p => p.Type == "unique_name").Select(p => p.Value).FirstOrDefault()))
-                .ForMember(dest => dest.Id, opt => opt.MapFrom(src =>
-                    src.Claims.Where(p => p.Type == "nameid").Select(p => p.Value).FirstOrDefault()))
-                .ForMember(dest => dest.DisplayName, opt => opt.MapFrom(src =>
-                    src.Claims.Where(p => p.Type == "given_name").Select(p => p.Value).FirstOrDefault()))
-                .ForMember(dest => dest.Roles, opt => opt.MapFrom(src =>
-                    src.Claims.Where(p => p.Type == "role").Select(p => p.Value).ToList()));
-            });
-            return mappingConfig;
+            CreateMap<ProductDTO, ProductDTOFull>()
+            .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(x => ""));
         }
     }
 }

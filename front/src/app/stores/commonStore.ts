@@ -21,7 +21,9 @@ export default class CommonStore {
 
     public setResources = async () => {
         resourceJsin.resources.map(item => (
-            this.resourcesRegistry.set(item.area + '_' + item.name.id, item.name.value)
+            item.name.map(name => (
+                this.resourcesRegistry.set(item.area + '_' + name.id, name.value)
+            ))         
         ));
     }
 

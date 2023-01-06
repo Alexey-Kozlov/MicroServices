@@ -1,4 +1,4 @@
-import { Button, CircularProgress, Container, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, TextField, ThemeProvider, Typography } from "@mui/material";
+import { Button, CircularProgress, Container, FormControl, MenuItem, Select, SelectChangeEvent, TextField, ThemeProvider, Typography } from "@mui/material";
 import Grid2 from "@mui/material/Unstable_Grid2";
 import { Controller, useForm } from "react-hook-form";
 import InputTheme from "../../app/themes/InputTheme";
@@ -7,7 +7,7 @@ import * as Yup from 'yup';
 import HeaderTheme from "../header/headerTheme";
 import { useStore } from "../../app/stores/store";
 import { IProduct, Product } from "../../app/models/iproduct";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { observer } from "mobx-react-lite";
 import WaitingIndicator from "../../app/components/WaitingIndicator";

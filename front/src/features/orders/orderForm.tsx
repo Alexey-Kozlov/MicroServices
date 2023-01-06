@@ -84,7 +84,7 @@ export default observer(function OrderForm() {
                         <Grid2 container direction="column" rowSpacing={1} columnSpacing={1}>
                             <Grid2 container direction="row" justifyContent="center" alignItems="center">
                             <Grid2 style={labelStyle} >
-                                <label>Дата заказа 2</label>
+                                <label>Дата заказа</label>
                             </Grid2>
                             <Grid2 xs={6}>
                                 <Controller

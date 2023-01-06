@@ -37,8 +37,8 @@ namespace MainAPI.Services
                 Token = token
             };
             //параллельно запускаем оба потока на получение данных
-            var productList = Task.Run<ResponseDTO>(() => SendAsync<ResponseDTO>(productParam));
-            var categoryList = Task.Run<ResponseDTO>(() => _category.GetCategoryList<ResponseDTO>(token));
+            var productList = Task.Run(() => SendAsync<ResponseDTO>(productParam));
+            var categoryList = Task.Run(() => _category.GetCategoryList<ResponseDTO>(token));
             //ждем выполнения обоих запросов
             await Task.WhenAll(productList, categoryList);
             if(productList.Result != null && productList.Result.IsSuccess)

@@ -3,17 +3,25 @@
   [
     {
       "area": "products",
-      "name": {
-        "id": "category_selector_empty_name",
-        "value": "Выберите категорию"
-      }
+      "name": [
+        {
+          "id": "category_selector_empty_name",
+          "value": "Выберите категорию"
+        },
+        {
+          "id": "product_selector_empty_name",
+          "value": "Выберите продукт"
+        }
+      ]
     },
     {
       "area": "category",
-      "name": {
-        "id": "111",
-        "value": "1111"
-      }
+      "name": [
+        {
+          "id": "111",
+          "value": "1111"
+        }
+      ]
     }
   ]
 

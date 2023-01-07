@@ -24,7 +24,8 @@ export default observer(function OrderForm() {
         orderDate: Yup.date().required('Необходимо указать дату!')
     });
     const { orderStore: { addEditOrder, getOrder, isLoading, isSubmitted },
-        productStore: { productItems } } = useStore();
+        productStore: { productItems, isAllProductItemsSelected },
+        commonStore: { setResources } } = useStore();
     const [order,setOrder] = useState<IOrder>();
     const { handleSubmit, control, formState: { errors }, reset } = useForm<IOrder>({
         defaultValues: new Order(0, new Date(),"","",[]),
@@ -51,20 +52,22 @@ export default observer(function OrderForm() {
     let { id } = useParams<{ id: string }>();
   
     useEffect(() => {
-        //редактируем заказ
-        if (id) {
-            getOrder(id!).then((item) => {
-                if (item) {
-                    reset(item);
-                    setOrder(item);
+        setResources().then(() => {
+            //редактируем заказ
+            if (id) {
+                getOrder(id!).then((item) => {
+                    if (item) {
+                        reset(item);
+                        setOrder(item);
+                    }
+                });
+            } else {
+                //новый заказ
+                setOrder(new Order(0, dayjs().toDate(), '', '', []));
+            }
+        });
 
-                }
-            });
-        } else {
-            //новый заказ
-            setOrder(new Order(0, dayjs().toDate(), '', '', []));
-        }
-    }, [id, getOrder]);
+    }, [id, getOrder, setResources]);
 
     const handleDataChange = (newDate: Dayjs | null) => {
         order!.orderDate = newDate!.toDate();
@@ -138,7 +141,7 @@ export default observer(function OrderForm() {
                                         Отмена
                                     </Button>
                                     <Button type="submit" variant="outlined"
-                                        disabled={isSubmitted}>
+                                            disabled={isSubmitted || !isAllProductItemsSelected}>
                                         {id ? "Сохранить" : "Ввод"}
                                         {isSubmitted && (
                                             <CircularProgress

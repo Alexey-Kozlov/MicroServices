@@ -5,12 +5,8 @@
       "area": "products",
       "name": [
         {
-          "id": "category_selector_empty_name",
-          "value": "Выберите категорию"
-        },
-        {
-          "id": "product_selector_empty_name",
-          "value": "Выберите продукт"
+          "id": "selector_empty_name",
+          "value": "--Выберите продукт--"
         }
       ]
     },
@@ -18,11 +14,21 @@
       "area": "category",
       "name": [
         {
-          "id": "111",
-          "value": "1111"
+          "id": "selector_empty_name",
+          "value": "--Выберите категорию--"
+        }
+      ]
+    },
+    {
+      "area": "orders",
+      "name": [
+        {
+          "id": "selector_emty_error_text",
+          "value": "Выберите продукт"
         }
       ]
     }
+
   ]
 
 }

@@ -29,7 +29,6 @@ namespace MainAPI.Core
 
     public class PageSettings
     {
-        public int MaxPageSize { get; set; }
         public int PageSize { get; set; }
     }
 }

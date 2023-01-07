@@ -1,4 +1,4 @@
-import { makeAutoObservable } from 'mobx';
+import { makeAutoObservable, runInAction } from 'mobx';
 import resourceJsin from '../../resources.json';
 
 export default class CommonStore {
@@ -12,7 +12,9 @@ export default class CommonStore {
     public getResource = (area: string, name: string) => {
         if (this.resourcesRegistry.size == 0) {
             this.setResources().then(() => {
-                return this.resourcesRegistry.get(area + '_' + name);
+                runInAction(() => {
+                    return this.resourcesRegistry.get(area + '_' + name);
+                });
             })
         } else {
             return this.resourcesRegistry.get(area + '_' + name);

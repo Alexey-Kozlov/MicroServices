@@ -22,13 +22,11 @@ namespace OrdersAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<ResponseDTO> Get([FromQuery] OrdersPageParams pagingParams)
+        public async Task<ResponseDTO> Get([FromBody] OrdersPageParams pagingParams)
         {
             try
             {
-          
                 _response.Result = JsonConvert.SerializeObject(await _ordersRepository.List(pagingParams));
-
             }
             catch (Exception e)
             {

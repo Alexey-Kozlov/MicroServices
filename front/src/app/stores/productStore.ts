@@ -1,5 +1,5 @@
 import { IProduct } from '../models/iproduct';
-import { makeAutoObservable, runInAction } from 'mobx';
+import { makeAutoObservable, reaction, runInAction } from 'mobx';
 import agent from '../api/agent';
 import { IOrder } from '../models/iorder';
 import { IProductItems } from '../models/iproductItems';
@@ -10,6 +10,7 @@ export default class ProductStore {
     selectedProduct: IProduct | undefined;
     isLoading: boolean = true;
     isSubmitted: boolean = false;
+    isAllProductItemsSelected: boolean = true;
 
     constructor() {
         makeAutoObservable(this);
@@ -78,12 +79,22 @@ export default class ProductStore {
     public addUpdateProductItem = (item?: IProductItems) => {
         if (!item) {
             let minIdItem = this.getMinId(this.productItems);
-            let minProdIdItem = this.getMinId(this.productRegistry, false);
-            this.productItems.set(minIdItem, { id: minIdItem, productId: minProdIdItem, name: '', quantity: 0 });
+            this.isAllProductItemsSelected = false;
+            this.productItems.set(minIdItem, { id: minIdItem, productId: 0, name: '', quantity: 0 });
         } else {
+            if (item.productId === 0) {
+                return;
+            }
             this.getProduct(item.productId.toString()).then((_item) => {
                 runInAction(() => {
                     this.productItems.set(item!.id, { id: item!.id, productId: item.productId, name: _item!.name, quantity: item.quantity });
+                    this.isAllProductItemsSelected = true;
+                    Array.from(this.productItems.values()).some(item => {
+                        if (item.productId === 0) {
+                            this.isAllProductItemsSelected = false;
+                            return false;
+                        }
+                    });
                 });
             });
         }

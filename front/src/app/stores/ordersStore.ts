@@ -1,4 +1,4 @@
-import { makeAutoObservable, reaction, runInAction } from 'mobx';
+﻿import { makeAutoObservable, reaction, runInAction } from 'mobx';
 import agent from '../api/agent';
 import { IOrder } from '../models/iorder';
 import PagingParams from '../models/pagingParams';
@@ -9,7 +9,7 @@ export default class OrdersStore {
     selectedOrder: IOrder | undefined;
     isLoading: boolean = true;
     isSubmitted: boolean = false;
-    predicate = new Map().set('all', true);
+    predicate = new Map<string,string>();
 
     constructor() {
         makeAutoObservable(this);
@@ -23,15 +23,28 @@ export default class OrdersStore {
         )
     }
 
-    setPredicate = (predicate: string, value: string | Date) => {
-        this.predicate.delete('all');
-        this.predicate.set('all', true);
+    setPredicate = (predicate: string, value: string) => {
+        switch (predicate) {
+            case 'sort':
+                if (this.predicate.get('sort')) {
+                    this.predicate.delete('sort');
+                }
+                break;
+        }
+       
+        this.predicate.set(predicate, value);
     }
 
     get pageParams() {
         const params = store.paging.pageParams;
-        this.predicate.forEach((value, key) => {
-            params.append(key, value);            
+        this.predicate.forEach((value : string, key: string) => {
+            switch (key) {
+                case 'sort':
+                    const sortData = value.split(',');
+                    params.append('sortField', sortData[0]);
+                    params.append('sortDirection', sortData[1]);      
+                    break;
+            }               
         });
         return params;
     }
@@ -50,6 +63,7 @@ export default class OrdersStore {
 
     public getOrders = async () => {
         this.setIsLoading(true);
+        this.ordersRegistry.clear();
         try {
             const data = await agent.Orders.getOrdersList(this.pageParams);
             runInAction(() => {
@@ -57,7 +71,6 @@ export default class OrdersStore {
                     this.ordersRegistry.set(order.id, order);
                 });
                 store.paging.setPagination(data!.pagination);
-
             });
             this.setIsLoading(false);
             return data!.Items;
@@ -79,10 +92,10 @@ export default class OrdersStore {
                 runInAction(() => {
                     if (data) {
                         this.ordersRegistry.set(data.id, data);
-                        this.selectedOrder = data;
                     }
                 });
-            }
+            } 
+            this.selectedOrder = data;            
             this.setIsLoading(false);
             return data;
         } catch (error) {

@@ -31,7 +31,34 @@ namespace OrdersAPI.Repository
             {
                 query = query.Where(p => p.UserId == pagingParams.UserId);
             }
-            return await PagedList<OrderDTO>.CreateAsync(query, pagingParams.PageNumber, pagingParams.PageSize);
+            if(!string.IsNullOrEmpty(pagingParams.SortField))
+            {
+                if (pagingParams.SortDirection == "asc")
+                {
+                    if (pagingParams.SortField == "Products")
+                    {
+                        //в случае сортировки по количеству позиций в заказе
+                        query = query.OrderBy(p => p.Products.Count());
+                    }
+                    else
+                    {
+                        query = query.OrderBy(p => EF.Property<object>(p, pagingParams.SortField));
+                    }
+                }
+                else
+                {
+                    if (pagingParams.SortField == "Products")
+                    {
+                        //в случае сортировки по количеству позиций в заказе
+                        query = query.OrderByDescending(p => p.Products.Count());
+                    }
+                    else
+                    {
+                        query = query.OrderByDescending(p => EF.Property<object>(p, pagingParams.SortField));
+                    }
+                }
+            }
+            return await PagedList<OrderDTO>.CreateAsync(query, pagingParams);
         }
 
         public async Task<OrderDTO> GetOrderById(int orderId)

@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System.Runtime.CompilerServices;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace OrdersAPI.Core
 {
@@ -27,12 +28,13 @@ namespace OrdersAPI.Core
             OrderDTO = items;
         }
 
-        public static async Task<PagedList<T>> CreateAsync(IQueryable<T> source, int pageNumber, int pageSize)
+        public static async Task<PagedList<T>> CreateAsync(IQueryable<T> source, OrdersPageParams pagingParams)
         {
             var count = await source.CountAsync();
-            var items = await source.Skip((pageNumber - 1) * pageSize)
-                .Take(pageSize).ToListAsync();
-            return new PagedList<T>(items, count, pageNumber, pageSize);
+            var items = await source.Skip((pagingParams.PageNumber - 1) * pagingParams.PageSize)
+                .Take(pagingParams.PageSize)
+                .ToListAsync();
+            return new PagedList<T>(items, count, pagingParams.PageNumber, pagingParams.PageSize);
         }
     }
 }

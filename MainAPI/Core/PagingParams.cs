@@ -4,7 +4,6 @@ namespace MainAPI.Core
 {
     public class PagingParams<T> where T : PageSettings
     {
-        private readonly int MaxPageSize = GetService().Value.MaxPageSize;
         private int _pageSize = 0;
         public int PageNumber { get; set; } = 1;
         public int PageSize
@@ -20,7 +19,7 @@ namespace MainAPI.Core
                     return _pageSize;
                 }
             }
-            set => _pageSize = (value > MaxPageSize) ? MaxPageSize : value;
+            set => _pageSize = value;
         }
 
         private static IOptions<T> GetService()

@@ -159,7 +159,7 @@ export default observer(function ProductForm() {
                                                         }}
                                                         error={errors.categoryId ? true : false}
                                                     >
-                                                        <MenuItem value={0}>{commonStore.getResource('products','category_selector_empty_name')}</MenuItem>
+                                                        <MenuItem value={0}>{commonStore.getResource('category','selector_empty_name')}</MenuItem>
                                                         {
                                                             Array.from(categoryRegistry.values()).map(category => (
                                                                 <MenuItem

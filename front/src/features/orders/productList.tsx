@@ -1,4 +1,4 @@
-import { MenuItem, TextField } from "@mui/material";
+import { MenuItem, TextField, Typography } from "@mui/material";
 import { Button, Container, FormControl, InputLabel, Paper, Select, SelectChangeEvent, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 import { observer } from "mobx-react-lite";
 import { ChangeEvent, ChangeEventHandler } from "react";
@@ -7,13 +7,14 @@ import EditButtons from "../../app/components/EditButtons";
 import { IOrder } from "../../app/models/iorder";
 import { ProductItems } from "../../app/models/iproductItems";
 import { useStore } from "../../app/stores/store";
+import HeaderTheme from "../header/headerTheme";
 
 interface prop {
     order?: IOrder;
 }
 export default observer(function ProductList({ order }: prop) {
     const { productStore: { getProductItems, productItems, addUpdateProductItem, getProducts,
-        productRegistry, deleteProductItem } } = useStore();
+        productRegistry, deleteProductItem }, commonStore } = useStore();
 
     useEffect(() => {
         getProducts().then(() => {
@@ -76,9 +77,12 @@ export default observer(function ProductList({ order }: prop) {
                                                 <Select
                                                     labelId={"selector" + item.id}
                                                     label="Продукт"
+                                                    displayEmpty
                                                     value={item.productId.toString()}
                                                     onChange={(e) => handleProductSelectChange(e , item.id)}
                                                 >
+                                                    <MenuItem key={item.id + '_0'}
+                                                        value={0}>{commonStore.getResource('products', 'selector_empty_name')}</MenuItem>                                                    
                                                     {
                                                         Array.from(productRegistry.values()).map(prod => (
                                                             <MenuItem
@@ -88,6 +92,9 @@ export default observer(function ProductList({ order }: prop) {
                                                     }
                                                 </Select>
                                             </FormControl>
+                                            <Typography variant="inherit" sx={HeaderTheme.typography.errorMessage}>
+                                                {item.productId === 0 ? commonStore.getResource('orders', 'selector_emty_error_text') : ''}
+                                            </Typography>
                                     </TableCell>
                                     <TableCell>
                                             <TextField variant="standard"

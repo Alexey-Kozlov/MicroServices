@@ -4,6 +4,7 @@ using AutoMapper;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using MainAPI.Core;
+using Newtonsoft.Json.Linq;
 
 namespace MainAPI.Services
 {
@@ -40,7 +41,7 @@ namespace MainAPI.Services
             var productList = Task.Run(() => SendAsync<ResponseDTO>(productParam));
             var categoryList = Task.Run(() => _category.GetCategoryList<ResponseDTO>(token));
             //ждем выполнения обоих запросов
-            await Task.WhenAll(productList, categoryList);
+            Task.WaitAll(productList, categoryList);
             if(productList.Result != null && productList.Result.IsSuccess)
             {
                 var productDTO = JsonConvert.DeserializeObject<List<ProductDTO>>(Convert.ToString(productList.Result.Result)!);
@@ -58,8 +59,8 @@ namespace MainAPI.Services
                         Name = p.Name,
                         Price = p.Price
                     });
-                    return new ResponseDTO { IsSuccess = true, 
-                        Result = JsonConvert.SerializeObject(result) };
+                    await SendToLog(result, "GetProductList", token);
+                    return new ResponseDTO { IsSuccess = true, Result = JsonConvert.SerializeObject(result) };
                 }
                 return new ResponseDTO { IsSuccess = true, 
                     Result = JsonConvert.SerializeObject(_mapper.Map<List<ProductDTOFull>>(productDTO!)) };
@@ -85,6 +86,23 @@ namespace MainAPI.Services
             {
                 ApiType = ApiType.Delete,
                 Url = _config["ProductAPI"]! + "/api/products/" + id.ToString(),
+                Token = token
+            });
+        }
+
+        private async Task SendToLog<T>(T logObject, string action, string token)
+        {
+            var data = new LogMessageDTO
+            {
+                typeName = typeof(T).ToString(),
+                action = action,
+                data = JsonConvert.SerializeObject(logObject!)
+            };
+            await SendAsync<T>(new ApiRequest()
+            {
+                ApiType = ApiType.Post,
+                Url = _config["RabbitProducer"]! + "/api/rabbitsend",
+                Data = data!,
                 Token = token
             });
         }

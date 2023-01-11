@@ -7,6 +7,8 @@ builder.Services.AddControllers();
 builder.Services.AddMIdentity(builder);
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IRabbitService, RabbitService>();
+builder.Services.AddScoped<IUserAccessor, UserAccessor>();
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
 var app = builder.Build();
 

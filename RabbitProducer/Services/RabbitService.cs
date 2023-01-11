@@ -7,7 +7,11 @@ namespace RabbitProducer.Services
 {
     public class RabbitService : IRabbitService
     {
-        public RabbitService() { }
+        private readonly IUserAccessor _userAccessor;
+        public RabbitService(IUserAccessor userAccessor) 
+        {
+            _userAccessor= userAccessor;
+        }
 
         public void SendMessage(LogMessageDTO messageText)
         {
@@ -27,7 +31,7 @@ namespace RabbitProducer.Services
                                  exclusive: false,
                                  autoDelete: false,
                                  arguments: null);
-
+                messageText.userName = _userAccessor.GetUserName();
                 string message = JsonConvert.SerializeObject(messageText);
                 var body = Encoding.UTF8.GetBytes(message);
                 var properties = channel.CreateBasicProperties();

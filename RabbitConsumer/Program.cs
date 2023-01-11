@@ -1,33 +1,40 @@
-﻿using RabbitMQ.Client;
-using RabbitMQ.Client.Events;
-using System.Text;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using RabbitConsumer;
+using RabbitConsumer.Persistance;
+using RabbitConsumer.Services;
 
-var factory = new ConnectionFactory();
-factory.UserName = "admin";
-factory.Password = "admin";
-factory.VirtualHost = "/";
-factory.Port = 5671;
-factory.Ssl.CertPath = @"d:\Certificates\publicCert.pem";
-factory.Ssl.Enabled = true;
-factory.Ssl.ServerName = "192.168.1.10";
-using (var connection = factory.CreateConnection())
-using (var channel = connection.CreateModel())
-{
-    channel.QueueDeclare(queue: "MServices",
-                     durable: true,
-                     exclusive: false,
-                     autoDelete: false,
-                     arguments: null);
-
-    var consumer = new EventingBasicConsumer(channel);
-    consumer.Received += (model, ea) =>
+var builder = new ConfigurationBuilder().AddJsonFile("appsettings.json", false, true);
+var config = builder.Build();
+var connectionString = config["ConnectionStrings:DefaultConnection"];
+using IHost host = Host.CreateDefaultBuilder(args)    
+    .ConfigureServices(
+    services =>
     {
-        var body = ea.Body.ToArray();
-        var message = Encoding.UTF8.GetString(body);
-    };
-    channel.BasicConsume(queue: "MServices",
-                                 autoAck: true,
-                                 consumer: consumer);
-    Console.ReadLine();
+        services.AddTransient<IRabbitService, RabbitService>();
+        services.AddDbContext<AppDbContext>(options => options.UseNpgsql(connectionString));
+        services.AddAutoMapper(typeof(Mapping));
+    }
+    ).Build();
 
+
+//UpdateDb(host.Services);
+GetServices(host.Services);
+
+//static void UpdateDb(IServiceProvider hostProvider)
+//{
+//    using IServiceScope serviceScope = hostProvider.CreateScope();
+//    IServiceProvider provider = serviceScope.ServiceProvider;
+//    AppDbContext db = provider.GetRequiredService<AppDbContext>();
+//    db.Database.Migrate();
+//}
+
+static void GetServices(IServiceProvider hostProvider)
+{
+    using IServiceScope serviceScope = hostProvider.CreateScope();
+    IServiceProvider provider = serviceScope.ServiceProvider;
+    IRabbitService logger = provider.GetRequiredService<IRabbitService>();
+    logger.ConsumeMessage();
 }

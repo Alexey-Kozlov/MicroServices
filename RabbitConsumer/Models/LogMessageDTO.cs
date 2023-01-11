@@ -1,4 +1,4 @@
-﻿namespace Models
+﻿namespace RabbitConsumer.Models
 {
     public class LogMessageDTO
     {

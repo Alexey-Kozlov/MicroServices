@@ -19,18 +19,20 @@ namespace Identity.Controllers
         private readonly ITokenService _tokenService;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly UsersHelper _userHelper;
+        private readonly IBrokerService _brokerService;
         protected ResponseDTO _response;
 
         public IdentityController(UserManager<ApplicationUser> userManager, 
             SignInManager<ApplicationUser> signInManager,
             ITokenService tokenService, RoleManager<IdentityRole> roleManager, 
-            UsersHelper userHelper)
+            UsersHelper userHelper, IBrokerService brokerService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _tokenService = tokenService;
             _roleManager = roleManager;
             _userHelper = userHelper;
+            _brokerService= brokerService;
             this._response = new ResponseDTO();
         }
 
@@ -92,6 +94,8 @@ namespace Identity.Controllers
             var user = await _userManager.Users.FirstOrDefaultAsync(p => p.UserName == User.FindFirstValue(ClaimTypes.Name));
             if (user == null) return Unauthorized();
             _response.Result = await _userHelper.CreateUserDTO(user);
+            await _brokerService.SendToLog(_response, "RefreshToken", 
+                ((UserDTO)_response.Result).Token);
             return Ok(_response);
         }
 

@@ -59,6 +59,7 @@ namespace MainAPI.Services
                         Name = p.Name,
                         Price = p.Price
                     });
+                    //пишем в лог через сервисный брокер Rabbit
                     await SendToLog(result, "GetProductList", token);
                     return new ResponseDTO { IsSuccess = true, Result = JsonConvert.SerializeObject(result) };
                 }

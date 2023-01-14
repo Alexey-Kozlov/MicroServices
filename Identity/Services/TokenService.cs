@@ -43,8 +43,8 @@ namespace Identity.Services
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.UtcNow.AddHours(Double.Parse(_config["TokenExpiresHours"])),
-                //Expires = DateTime.UtcNow.AddMinutes(2),
+                //Expires = DateTime.UtcNow.AddHours(Double.Parse(_config["TokenExpiresHours"])),
+                Expires = DateTime.UtcNow.AddMinutes(2),
                 SigningCredentials = cred
             };
 

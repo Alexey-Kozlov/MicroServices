@@ -13,7 +13,7 @@ using IHost host = Host.CreateDefaultBuilder(args)
     .ConfigureServices(
     services =>
     {
-        services.AddTransient<IRabbitService, RabbitService>();
+        services.AddSingleton<IRabbitService, RabbitService>();
         services.AddDbContext<AppDbContext>(options => options.UseNpgsql(connectionString));
         services.AddAutoMapper(typeof(Mapping));
     }

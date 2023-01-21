@@ -1,4 +1,4 @@
-import ReactDOM from 'react-dom/client';
+ import ReactDOM from 'react-dom/client';
 import App from './app/layout/App';
 import { store, StoreContext } from './app/stores/store';
 import { BrowserRouter } from 'react-router-dom'

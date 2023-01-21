@@ -4,10 +4,7 @@ export interface ILogin {
 }
 
 export class Login implements ILogin {
-    login: string;
-    password: string;
-
-    constructor(login: string, password: string) {
+    constructor(public login: string, public password: string) {
         this.login = login;
         this.password = password;
     }

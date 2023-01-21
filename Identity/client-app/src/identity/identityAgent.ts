@@ -8,9 +8,7 @@ axios.interceptors.response.use(async response => {
     return response;
 }, (error: AxiosError) => {
     if (error.response) {
-        const { data, status, config } = error.response!;
         console.log("Agent error - " + error.response!.data);
-
     }
     console.log("Agent error - " + error.stack);
     return Promise.reject(error);

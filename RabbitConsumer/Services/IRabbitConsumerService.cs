@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RabbitConsumer.Services
 {
-    public interface IRabbitService
+    public interface IRabbitConsumerService
     {
         void ConsumeMessage();
     }

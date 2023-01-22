@@ -9,12 +9,11 @@ using RabbitConsumer.Services;
 var builder = new ConfigurationBuilder().AddJsonFile("appsettings.json", false, true);
 var config = builder.Build();
 var connectionString = config["ConnectionStrings:DefaultConnection"];
-using IHost host = Host.CreateDefaultBuilder(args)    
-    .ConfigureServices(
-    services =>
+using IHost host = Host.CreateDefaultBuilder(args).ConfigureServices(services =>
     {
-        services.AddSingleton<IRabbitService, RabbitService>();
+        services.AddSingleton<IRabbitConsumerService, RabbitConsumerService>();
         services.AddDbContext<AppDbContext>(options => options.UseNpgsql(connectionString));
+        services.AddSingleton<ISaveDb, SaveDb>();
         services.AddAutoMapper(typeof(Mapping));
     }
     ).Build();
@@ -35,6 +34,6 @@ static void GetServices(IServiceProvider hostProvider)
 {
     using IServiceScope serviceScope = hostProvider.CreateScope();
     IServiceProvider provider = serviceScope.ServiceProvider;
-    IRabbitService logger = provider.GetRequiredService<IRabbitService>();
+    IRabbitConsumerService logger = provider.GetRequiredService<IRabbitConsumerService>();
     logger.ConsumeMessage();
 }

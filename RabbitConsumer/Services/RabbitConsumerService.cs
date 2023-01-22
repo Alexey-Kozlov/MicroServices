@@ -9,14 +9,12 @@ using RabbitConsumer.Domain;
 
 namespace RabbitConsumer.Services
 {
-    public class RabbitService : IRabbitService
+    public class RabbitConsumerService : IRabbitConsumerService
     {
-        private readonly AppDbContext _appDbContext;
-        private readonly IMapper _mapper;
-        public RabbitService(AppDbContext appDbContext, IMapper mapper)
+        private readonly ISaveDb _saveDb;
+        public RabbitConsumerService(ISaveDb saveDb)
         {
-            _appDbContext = appDbContext;
-            _mapper = mapper;
+            _saveDb = saveDb;
         }
 
         public void ConsumeMessage()
@@ -45,9 +43,7 @@ namespace RabbitConsumer.Services
                     var message = Encoding.UTF8.GetString(body);
 
                     var result = JsonConvert.DeserializeObject<LogMessageDTO>(message);
-                    var logMessage = _mapper.Map<LogMessage>(result);
-                    _appDbContext.LogMessage.Add(logMessage);
-                    await _appDbContext.SaveChangesAsync();
+                    await _saveDb.SaveMessage(result!);
                 };
                 channel.BasicConsume(queue: "MServices",
                                              autoAck: true,

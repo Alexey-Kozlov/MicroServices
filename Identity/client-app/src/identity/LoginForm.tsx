@@ -33,7 +33,10 @@ export default function LoginForm() {
                 }
                 window.location.href = url;
             })
-            .catch(error => alert(error));
+            .catch(error => {
+                alert(error);
+
+            });
     });
     const labelStyle = {
         width: "130px"

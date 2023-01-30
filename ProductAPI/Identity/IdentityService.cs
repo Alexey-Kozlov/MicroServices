@@ -39,44 +39,23 @@ namespace MIdentity
             if (tokenObj != null)
             {
                 var model = _mapper.Map<IdentityModel>(tokenObj);
-                var tempToken = CreateTempToken(model);
-                var symmetricKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("ТестовыйКлюч"));
-                var validationParameters = new TokenValidationParameters()
+                //эдесь получаем аутентифицированного пользователя упрощенно, из списка клаймсов
+                var claims = new List<Claim>
                 {
-                    ValidateLifetime = false,
-                    ValidateAudience = false,
-                    ValidateIssuer = false,
-                    IssuerSigningKey = symmetricKey
+                    new Claim(ClaimTypes.Name, model.UserName),
+                    new Claim(ClaimTypes.NameIdentifier, model.Id),
+                    new Claim(ClaimTypes.GivenName, model.DisplayName)
                 };
-                var identity = tokenHandler.ValidateToken(tempToken, validationParameters, out var sec);
-                return identity;
+                //назначаем роли
+                foreach (var role in model.Roles)
+                {
+                    claims.Add(new Claim(ClaimTypes.Role, role));
+                }
+                var claimIdentity = new ClaimsIdentity(claims,"SomeCustomKey");
+                var claimsPrincipal = new ClaimsPrincipal(claimIdentity);
+                return claimsPrincipal;
             }
             return null;
-        }
-
-        private string CreateTempToken(IdentityModel model)
-        {
-            var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.Name, model.UserName),
-                new Claim(ClaimTypes.NameIdentifier, model.Id),
-                new Claim(ClaimTypes.GivenName, model.DisplayName)
-            };
-            //назначаем роли
-            foreach (var role in model.Roles)
-            {
-                claims.Add(new Claim(ClaimTypes.Role, role));
-            }
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("ТестовыйКлюч"));
-            var cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(claims),
-                SigningCredentials = cred
-            };
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            return tokenHandler.WriteToken(token);
         }
     }
 }

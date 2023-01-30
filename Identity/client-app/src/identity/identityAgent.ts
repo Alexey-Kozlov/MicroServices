@@ -8,7 +8,12 @@ axios.interceptors.response.use(async response => {
     return response;
 }, (error: AxiosError) => {
     if (error.response) {
+        if (error.response!.data && ((error.response!.data) as any).errors) {
+            console.log("Agent error - " + ((error.response!.data) as any).errors[0]);
+            return Promise.reject(((error.response!.data) as any).errors[0]);
+        }
         console.log("Agent error - " + error.response!.data);
+        return Promise.reject(error.response!.data);
     }
     console.log("Agent error - " + error.stack);
     return Promise.reject(error);
@@ -18,7 +23,8 @@ axios.interceptors.response.use(async response => {
 const responseBody = <T>(response: AxiosResponse<T>) => response.data;
 
 const Identity = {
-    login: (login: ILogin) => axios.post<ResponseResult<IIdentity>>('/login', { ...login }).then(responseBody),
+    login: (login: ILogin) => axios.post<ResponseResult<IIdentity>>(process.env.REACT_APP_IDENTITY! +
+        '/login', { ...login }).then(responseBody),
     identity: (token: string) => {
         const axInstance = axios.create({
             headers: {

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http.Extensions;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Http.Extensions;
 using System.Net;
 
 namespace MIdentity
@@ -35,9 +36,9 @@ namespace MIdentity
                         {
                             var principal = _identityService.GetPrincipal(token!);
                             if (principal != null)
-                            {
+                            {                                
                                 //валидный токен, получен пользователь
-                                context.User = principal;
+                               context.User = principal;
                             }
                         }
                         else

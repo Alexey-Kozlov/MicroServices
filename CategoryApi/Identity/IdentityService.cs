@@ -39,6 +39,8 @@ namespace MIdentity
             if (tokenObj != null)
             {
                 var model = _mapper.Map<IdentityModel>(tokenObj);
+                //здесь получаем клаймс через создание jwt-токена, тоже так можно, но 
+                //долго и ресурсозатратно, лучше сделать как в заказах и продуктах
                 var tempToken = CreateTempToken(model);
                 var symmetricKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("ТестовыйКлюч"));
                 var validationParameters = new TokenValidationParameters()

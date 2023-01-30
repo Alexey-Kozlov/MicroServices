@@ -18,6 +18,7 @@ namespace ProductAPI.Controllers
             this._response = new ResponseDTO();
         }
 
+        [Authorize(Roles = "Admin,User")]
         [HttpGet]
         public async Task<ResponseDTO> Get()
         {

@@ -9,13 +9,13 @@ namespace ProductAPI.Configurations
     {
         public void Configure(EntityTypeBuilder<Product> builder)
         {
-            builder.ToTable("Product").HasKey(p => p.Id).HasName("PK_Product_Id");
-            builder.Property(p => p.Id).HasColumnName("Id").ValueGeneratedOnAdd();
-            builder.Property(p => p.Name).HasColumnName("Name").IsRequired(true);
-            builder.Property(p => p.Price).HasColumnName("Price").IsRequired(true);
-            builder.Property(p => p.Description).HasColumnName("Description").IsRequired(false);
-            builder.Property(p => p.CategoryId).HasColumnName("CategoryId").IsRequired(true);
-            builder.Property(p => p.ImageId).HasColumnName("ImageId").IsRequired(true);
+            builder.ToTable("product").HasKey(p => p.Id).HasName("PK_Product_Id");
+            builder.Property(p => p.Id).HasColumnName("id").ValueGeneratedOnAdd();
+            builder.Property(p => p.Name).HasColumnName("name").IsRequired(true);
+            builder.Property(p => p.Price).HasColumnName("price").IsRequired(true);
+            builder.Property(p => p.Description).HasColumnName("description").IsRequired(false);
+            builder.Property(p => p.CategoryId).HasColumnName("categoryId").IsRequired(true);
+            builder.Property(p => p.ImageId).HasColumnName("imageId").IsRequired(true);
             builder.HasIndex(p => p.Id).HasDatabaseName("IX_Product_Id");
             builder.HasIndex(p => p.Name).HasDatabaseName("IX_Product_Name");
             builder.HasIndex(p => p.CategoryId).HasDatabaseName("IX_Product_CategoryId");

@@ -8,9 +8,9 @@ namespace CategoryAPI.Configurations
     {
         public void Configure(EntityTypeBuilder<Category> builder)
         {
-            builder.ToTable("Category").HasKey(p => p.Id).HasName("PK_Category_id");
-            builder.Property(p => p.Id).HasColumnName("Id").ValueGeneratedOnAdd();
-            builder.Property(p => p.Name).HasColumnName("Name").IsRequired(true);
+            builder.ToTable("category").HasKey(p => p.Id).HasName("PK_Category_id");
+            builder.Property(p => p.Id).HasColumnName("id").ValueGeneratedOnAdd();
+            builder.Property(p => p.Name).HasColumnName("name").IsRequired(true);
             builder.HasIndex(p => p.Id).HasDatabaseName("IX_Category_Id");
 
         }

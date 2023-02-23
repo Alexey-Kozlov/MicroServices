@@ -22,11 +22,12 @@ namespace RabbitConsumer.Services
             var factory = new ConnectionFactory();
             factory.UserName = "admin";
             factory.Password = "admin";
-            factory.VirtualHost = "/";
-            factory.Port = 5671;
-            factory.Ssl.CertPath = @"d:\Certificates\publicCert.pem";
-            factory.Ssl.Enabled = true;
-            factory.Ssl.ServerName = "192.168.1.10";
+            factory.HostName = "localhost";
+            //factory.VirtualHost = "/";
+            factory.Port = 5672;
+            //factory.Ssl.CertPath = @"d:\Certificates\publicCert.pem";
+            //factory.Ssl.Enabled = true;
+            //factory.Ssl.ServerName = "localhost";
             using (var connection = factory.CreateConnection())
             using (var channel = connection.CreateModel())
             {

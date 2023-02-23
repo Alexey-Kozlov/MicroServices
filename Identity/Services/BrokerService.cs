@@ -24,7 +24,7 @@ namespace Identity.Services
             await SendAsync<T>(new ApiRequest()
             {
                 ApiType = ApiType.Post,
-                Url = _config["RabbitProducer"]! + "/api/rabbitsend",
+                Url = _config["RABBIT_PRODUCER"]! + "/api/rabbitsend",
                 Data = data!,
                 Token = token
             });

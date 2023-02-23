@@ -68,3 +68,10 @@ return PhysicalFile(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "in
 создает контент пользователя и авторизует контент. Производится переход в требуемый контроллер. 
 И далее - этот процесс повторяется при любом обращении к любоиу WebApi. Обращения от фронта - игнорируются.
 9. Если от identity получен отрицательный ответ соответствия - происходит ошибка авторизации.
+
+----------------------------------------------------
+Создание образа api
+docker build -f D:\Projects\MicroServices\Identity\Dockerfile -t kozlovas/ms-identity-api D:\Projects\MicroServices
+
+Cоздание образа фронта
+docker build -f D:\Projects\MicroServices\Identity\client-app\Dockerfile -t kozlovas/ms-identity-front D:\Projects\MicroServices\Identity\client-app

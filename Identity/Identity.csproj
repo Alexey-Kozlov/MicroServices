@@ -6,75 +6,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="app-client\**" />
-    <Compile Remove="client-app\cert\**" />
-    <Content Remove="app-client\**" />
-    <Content Remove="client-app\cert\**" />
-    <EmbeddedResource Remove="app-client\**" />
-    <EmbeddedResource Remove="client-app\cert\**" />
-    <None Remove="app-client\**" />
-    <None Remove="client-app\cert\**" />
-    <TypeScriptCompile Remove="app-client\**" />
-    <TypeScriptCompile Remove="client-app\cert\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <TypeScriptCompile Remove="client-app\src\identity\headerTheme.ts" />
-    <TypeScriptCompile Remove="client-app\src\identity\identityAgent.ts" />
-    <TypeScriptCompile Remove="client-app\src\identity\identityModel.ts" />
-    <TypeScriptCompile Remove="client-app\src\identity\ilogin.ts" />
-    <TypeScriptCompile Remove="client-app\src\identity\iloginModel.ts" />
-    <TypeScriptCompile Remove="client-app\src\identity\InputTheme.ts" />
-    <TypeScriptCompile Remove="client-app\src\identity\LoginForm.tsx" />
-    <TypeScriptCompile Remove="client-app\src\identity\responseResult.ts" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="client-app\src\identity\headerTheme.ts" />
-    <None Include="client-app\src\identity\identityAgent.ts" />
-    <None Include="client-app\src\identity\identityModel.ts" />
-    <None Include="client-app\src\identity\ilogin.ts" />
-    <None Include="client-app\src\identity\iloginModel.ts" />
-    <None Include="client-app\src\identity\InputTheme.ts" />
-    <None Include="client-app\src\identity\LoginForm.tsx" />
-    <None Include="client-app\src\identity\responseResult.ts" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="12.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="7.0.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.11" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.0">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="Microsoft.TypeScript.MSBuild" Version="4.9.3">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.0" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Update="Properties\Resources.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Update="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="wwwroot\" />
   </ItemGroup>
 
 </Project>

@@ -9,6 +9,7 @@ using System.Security.Claims;
 
 namespace Identity.Controllers
 {
+    [Route("ms/identity")]
     public class IdentityController : ControllerBase
     {
         private readonly UserManager<ApplicationUser> _userManager;

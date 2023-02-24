@@ -31,6 +31,7 @@ builder.Services.AddCors(opt =>
     });
 });
 IMapper mapper = Mapping.RegisterMaps().CreateMapper();
+builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
 builder.Services.AddSingleton(mapper);
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<UsersHelper>();

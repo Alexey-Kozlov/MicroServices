@@ -16,6 +16,8 @@ export default observer(function LoginTab({ theme }: prop) {
     const url = useLocation();
     const navigate = useNavigate();
     useEffect(() => {
+        console.log("REACT_APP_TOKEN_NAME - " + process.env.REACT_APP_TOKEN_NAME);
+        console.log("REACT_APP_IDENTITY - " + process.env.REACT_APP_IDENTITY);
         //если перенаправление на присваивание токена - отменяем логику
         if (url.pathname.toLowerCase() === "/token") {
             return;
@@ -38,7 +40,7 @@ export default observer(function LoginTab({ theme }: prop) {
 
     const handleLogout = () => {
         store.identityStore.logout()
-            .then(() => navigate('/'))
+            .then(() => navigate(process.env.REACT_APP_FRONT!))
             .catch(error => alert(error));
     }
     const getActiveTab = () => {
@@ -58,7 +60,7 @@ export default observer(function LoginTab({ theme }: prop) {
             {isLoggedIn && <Tab label={_identity && _identity!.displayName}
                 onClick={() => handleTest() } sx={theme} />}
             {isLoggedIn && <Tab label="Выйти" onClick={() => handleLogout()} sx={theme} />}                
-            {!isLoggedIn && <Tab label="Логин" href={process.env.REACT_APP_IDENTITY! + '/login'} sx={theme} />}
+            {!isLoggedIn && <Tab label="Логин" href={process.env.REACT_APP_LOGIN! + '/login'} sx={theme} />}
             
         </Tabs>        
     )

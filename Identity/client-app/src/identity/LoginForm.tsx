@@ -127,7 +127,7 @@ export default function LoginForm() {
                                 sx={{ marginTop: "20px", marginBottom:"20px" }}
                             >
                                 <Stack spacing={2}>
-                                    <Link to="/newaccount" >Создать нового пользователя</Link>
+                                    <Link to={ process.env.REACT_APP_IDENTITY! + "/newaccount"} >Создать нового пользователя</Link>
                                     <Box display="flex"
                                         justifyContent="center"
                                         alignItems="center">

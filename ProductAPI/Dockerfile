@@ -1,5 +1,5 @@
 FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS base
-ENV RABBIT_PRODUCER=http://ms-rabbit-producer-service:5021/rabbitsend
+ENV RABBIT_PRODUCER=ms-rabbit-producer
 
 WORKDIR /app
 EXPOSE 5020

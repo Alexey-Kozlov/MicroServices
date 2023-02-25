@@ -1,0 +1,1 @@
+docker build -f D:\Projects\MicroServices\front\Dockerfile -t kozlovas/ms-front D:\Projects\MicroServices\front

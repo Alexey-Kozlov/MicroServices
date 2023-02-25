@@ -23,8 +23,8 @@ axios.interceptors.response.use(async response => {
 const responseBody = <T>(response: AxiosResponse<T>) => response.data;
 
 const Identity = {
-    login: (login: ILogin) => axios.post<ResponseResult<IIdentity>>(process.env.REACT_APP_IDENTITY! +
-        '/login', { ...login }).then(responseBody),
+    login: (login: ILogin) => axios.post<ResponseResult<IIdentity>>(process.env.REACT_APP_IDENTITY_API! +
+            '/login', { ...login }).then(responseBody),
     identity: (token: string) => {
         const axInstance = axios.create({
             headers: {
@@ -33,9 +33,9 @@ const Identity = {
         });
         return axInstance.get<ResponseResult<IIdentity>>('/CurrentUser').then(responseBody);
     },
-    register: (user: INewAccount) => axios.post<ResponseResult<IIdentity>>(process.env.REACT_APP_IDENTITY! +
+    register: (user: INewAccount) => axios.post<ResponseResult<IIdentity>>(process.env.REACT_APP_IDENTITY_API! +
         '/register', { ...user }).then(responseBody),
-    refreshToken: () => axios.post<ResponseResult<IIdentity>>(process.env.REACT_APP_IDENTITY! +
+    refreshToken: () => axios.post<ResponseResult<IIdentity>>(process.env.REACT_APP_IDENTITY_API! +
         '/refreshToken', {}).then(responseBody)
 }
 

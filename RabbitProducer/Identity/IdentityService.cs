@@ -15,13 +15,15 @@ namespace MIdentity
         private readonly IdentitySettings _identitySettings;
         private readonly IConfiguration _config;
         private readonly IMapper _mapper;
+        private readonly ILogger<IdentityService> _logger;
         public IdentityService(IHttpClientFactory clientFactory, IConfiguration config,
-            IOptions<IdentitySettings> options, IMapper mapper) : base(clientFactory)
+            IOptions<IdentitySettings> options, IMapper mapper, ILogger<IdentityService> logger) : base(clientFactory)
         {
             _clientFactory = clientFactory;
             _identitySettings = options.Value;
             _config = config;
             _mapper = mapper;
+            _logger = logger;
         }
         public async Task<bool> CheckToken(string token)
         {
@@ -29,7 +31,7 @@ namespace MIdentity
             {
                 ApiType = ApiType.Post,
                 Data = new IdentityModel { token = token },
-                Url = _config["IdentitySettings:IdentityUrlCheckToken"]!
+                Url = _config["IDENTITY_TOKEN"]!
             }); ;
         }
         public ClaimsPrincipal? GetPrincipal(string token)

@@ -20,18 +20,20 @@ export default observer(function App() {
           <ToastContainer position='bottom-right' hideProgressBar />
           <Header />
           <Routes>
-              <Route path="/" element={<p>Главная</p>}></Route>
-              <Route path="/unathorized" element={<UnAthorized />}></Route>
-              <Route path="/products" element={<ProductMain />}></Route>
-              <Route path="/product" element={<ProductForm />}></Route>
-              <Route path="/product/:id" element={<ProductForm />}></Route>
-              <Route path="/category" element={<CategoryMain />}></Route>
-              <Route path="/addCategory" element={<CategoryForm />}></Route>
-              <Route path="/category/:id" element={<CategoryForm />}></Route>
-              <Route path="/token" element={<GetToken />}></Route>
-              <Route path="/orders" element={<OrdersMain />}></Route>
-              <Route path="/order" element={<OrderForm />}></Route>
-              <Route path="/order/:id" element={<OrderForm />}></Route>
+              <Route path="ms">
+                  <Route path="" element={<p>Главная</p>}></Route>
+                  <Route path="unathorized" element={<UnAthorized />}></Route>
+                  <Route path="products" element={<ProductMain />}></Route>
+                  <Route path="product" element={<ProductForm />}></Route>
+                  <Route path="product/:id" element={<ProductForm />}></Route>
+                  <Route path="category" element={<CategoryMain />}></Route>
+                  <Route path="addCategory" element={<CategoryForm />}></Route>
+                  <Route path="category/:id" element={<CategoryForm />}></Route>
+                  <Route path="token" element={<GetToken />}></Route>
+                  <Route path="orders" element={<OrdersMain />}></Route>
+                  <Route path="order" element={<OrderForm />}></Route>
+                  <Route path="order/:id" element={<OrderForm />}></Route>
+              </Route>
           </Routes>
     </>
   );

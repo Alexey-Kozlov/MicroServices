@@ -1,39 +1,17 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using RabbitConsumer;
+using Microsoft.EntityFrameworkCore;
 using RabbitConsumer.Persistance;
 using RabbitConsumer.Services;
+using RabbitConsumer;
 
-var builder = new ConfigurationBuilder().AddJsonFile("appsettings.json", false, true);
-var config = builder.Build();
-var connectionString = config["ConnectionStrings:DefaultConnection"];
-using IHost host = Host.CreateDefaultBuilder(args).ConfigureServices(services =>
-    {
-        services.AddSingleton<IRabbitConsumerService, RabbitConsumerService>();
-        services.AddDbContext<AppDbContext>(options => options.UseNpgsql(connectionString));
-        services.AddSingleton<ISaveDb, SaveDb>();
-        services.AddAutoMapper(typeof(Mapping));
-    }
-    ).Build();
+var builder = WebApplication.CreateBuilder(args);
 
 
-//UpdateDb(host.Services);
-GetServices(host.Services);
-
-//static void UpdateDb(IServiceProvider hostProvider)
-//{
-//    using IServiceScope serviceScope = hostProvider.CreateScope();
-//    IServiceProvider provider = serviceScope.ServiceProvider;
-//    AppDbContext db = provider.GetRequiredService<AppDbContext>();
-//    db.Database.Migrate();
-//}
-
-static void GetServices(IServiceProvider hostProvider)
+builder.Services.AddDbContext<AppDbContext>(options =>
 {
-    using IServiceScope serviceScope = hostProvider.CreateScope();
-    IServiceProvider provider = serviceScope.ServiceProvider;
-    IRabbitConsumerService logger = provider.GetRequiredService<IRabbitConsumerService>();
-    logger.ConsumeMessage();
-}
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
+});
+builder.Services.AddHostedService<RabbitConsumerService>();
+builder.Services.AddAutoMapper(typeof(Mapping));
+
+var app = builder.Build();
+app.Run();

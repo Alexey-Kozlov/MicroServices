@@ -11,16 +11,4 @@
     <!-- Folder where production build objects will be placed -->
     <BuildOutputFolder>$(MSBuildProjectDirectory)\build</BuildOutputFolder>
   </PropertyGroup>
-  <ItemGroup>
-    <TypeScriptConfiguration Remove="cert\**" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Remove="cert\**" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Remove="cert\192_168_1_10.key" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Remove="cert\192_168_1_10.crt" />
-  </ItemGroup>
 </Project>

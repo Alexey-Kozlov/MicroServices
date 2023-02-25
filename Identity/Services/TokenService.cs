@@ -1,13 +1,9 @@
-﻿using Identity.Models;
-using Microsoft.AspNetCore.Http;
+﻿using Identity.Controllers;
+using Identity.Models;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Security.Cryptography;
-using System.Security.Principal;
 using System.Text;
 
 namespace Identity.Services
@@ -17,12 +13,15 @@ namespace Identity.Services
         private readonly IConfiguration _config;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IHttpContextAccessor _accessor;
+        private readonly ILogger<TokenService> _logger;
 
-        public TokenService(IConfiguration config, UserManager<ApplicationUser> userManager, IHttpContextAccessor accessor)
+        public TokenService(IConfiguration config, UserManager<ApplicationUser> userManager, 
+            IHttpContextAccessor accessor, ILogger<TokenService> logger)
         {
             _config = config;
             _userManager = userManager;
             _accessor = accessor;
+            _logger = logger;
         }
 
         public async Task<string> CreateToken(ApplicationUser user)
@@ -57,6 +56,8 @@ namespace Identity.Services
 
         public bool ValidateToken(string token)
         {
+            _logger.LogInformation("ValidateToken - " + token);
+
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["TokenKey"]));
             var validationParameters =  new TokenValidationParameters()

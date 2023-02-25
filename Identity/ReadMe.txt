@@ -75,3 +75,4 @@ docker build -f D:\Projects\MicroServices\Identity\Dockerfile -t kozlovas/ms-ide
 
 Cоздание образа фронта
 docker build -f D:\Projects\MicroServices\Identity\client-app\Dockerfile -t kozlovas/ms-identity-front D:\Projects\MicroServices\Identity\client-app
+

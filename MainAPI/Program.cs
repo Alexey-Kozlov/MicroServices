@@ -10,7 +10,7 @@ builder.Services.AddCors(opt =>
 {
     opt.AddPolicy("CorsPolicy", policy =>
     {
-        policy.WithOrigins(builder.Configuration.GetValue(typeof(string), "FrontUrl")!.ToString()!)
+        policy.WithOrigins(builder.Configuration.GetValue(typeof(string), "FRONT_URL")!.ToString()!)
         .AllowAnyMethod().AllowAnyHeader().AllowCredentials()
         .WithExposedHeaders("WWW-Authenticate", "Pagination");
     });
@@ -71,7 +71,6 @@ app.UseCors("CorsPolicy");
 //здесь кастомная аутентификация и авторизация через identity
 app.UseMiddleware<IdentityMiddleware>();
 app.UseRouting();
-app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 

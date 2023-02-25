@@ -28,7 +28,7 @@ namespace Services
                 client.DefaultRequestHeaders.Clear();
 
                 if (apiRequest.Data != null)
-                {
+                {                    
                     message.Content = new StringContent(JsonConvert.SerializeObject(apiRequest.Data), Encoding.UTF8, MediaTypeNames.Application.Json);
                 }
 

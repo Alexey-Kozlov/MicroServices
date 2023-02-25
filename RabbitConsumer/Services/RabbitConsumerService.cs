@@ -6,51 +6,96 @@ using RabbitConsumer.Models;
 using RabbitConsumer.Persistance;
 using AutoMapper;
 using RabbitConsumer.Domain;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using System.Threading.Channels;
 
 namespace RabbitConsumer.Services
 {
-    public class RabbitConsumerService : IRabbitConsumerService
+    public class RabbitConsumerService : BackgroundService
     {
-        private readonly ISaveDb _saveDb;
-        public RabbitConsumerService(ISaveDb saveDb)
+        private IConnection _connection;
+        private IModel _channel;
+        private readonly AppDbContext _appDbContext;
+        private readonly IConfiguration _configuration;
+        private readonly ILogger<RabbitConsumerService> _logger;
+        private readonly IMapper _mapper;
+        public RabbitConsumerService(IConfiguration configuration,
+            ILogger<RabbitConsumerService> logger, AppDbContext appDbContext, IMapper mapper)
         {
-            _saveDb = saveDb;
+            _appDbContext= appDbContext;
+            _configuration = configuration; 
+            _mapper = mapper;
+            _logger = logger;
+            try
+            {
+                _logger.LogInformation("Init rabbit consuner service");
+                _configuration = configuration;
+                var factory = new ConnectionFactory();
+                factory.HostName = _configuration.GetValue<string>("RABBIT_SERVICE_NAME");
+                factory.Port = _configuration.GetValue<int>("RABBIT_SERVICE_PORT");
+                _connection = factory.CreateConnection();
+                _channel = _connection.CreateModel();
+                _channel.QueueDeclare(queue: _configuration.GetValue<string>("RABBIT_QUEUE_NAME"), 
+                    durable: true, 
+                    exclusive: false, 
+                    autoDelete: false, 
+                    arguments: null);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"RabbitConsumer error - {ex.Message}");
+            }
         }
 
-        public void ConsumeMessage()
+        protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            var factory = new ConnectionFactory();
-            factory.UserName = "admin";
-            factory.Password = "admin";
-            factory.HostName = "localhost";
-            //factory.VirtualHost = "/";
-            factory.Port = 5672;
-            //factory.Ssl.CertPath = @"d:\Certificates\publicCert.pem";
-            //factory.Ssl.Enabled = true;
-            //factory.Ssl.ServerName = "localhost";
-            using (var connection = factory.CreateConnection())
-            using (var channel = connection.CreateModel())
+            try
             {
-                channel.QueueDeclare(queue: "MServices",
-                                 durable: true,
-                                 exclusive: false,
-                                 autoDelete: false,
-                                 arguments: null);
+                stoppingToken.ThrowIfCancellationRequested();
 
-                var consumer = new EventingBasicConsumer(channel);
-                consumer.Received += async (model, ea) =>
+                var consumer = new EventingBasicConsumer(_channel);
+                consumer.Received += (ch, ea) =>
                 {
-                    var body = ea.Body.ToArray();
-                    var message = Encoding.UTF8.GetString(body);
+                    try
+                    {
+                        var body = ea.Body.ToArray();
+                        var message = Encoding.UTF8.GetString(body);
+                        _logger.LogInformation("Get new message - " + message);
+                        var result = JsonConvert.DeserializeObject<LogMessageDTO>(message);
 
-                    var result = JsonConvert.DeserializeObject<LogMessageDTO>(message);
-                    await _saveDb.SaveMessage(result!);
+                        var logMessage = _mapper.Map<LogMessage>(result);
+                        _appDbContext.LogMessage.Add(logMessage);
+                        _appDbContext.SaveChanges();
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogInformation("Ошибка записи - " + ex.Message);
+                    }
                 };
-                channel.BasicConsume(queue: "MServices",
-                                             autoAck: true,
-                                             consumer: consumer);
-                Console.ReadLine();
+
+                _channel.BasicConsume(_configuration.GetValue<string>("RABBIT_QUEUE_NAME"), false, consumer);
             }
+            catch (Exception ex)
+            {
+                _logger.LogError($"RabbitConsumer error - {ex.Message}");
+            }
+            return Task.CompletedTask;
+        }
+
+       
+
+        public override void Dispose()
+        {
+            if (_channel != null)
+            {
+                _channel.Close();
+            }
+            if (_connection != null)
+            {
+                _connection.Close();
+            }
+            base.Dispose();
         }
     }
 }

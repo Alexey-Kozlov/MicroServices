@@ -4,11 +4,11 @@ import LoginForm from './identity/LoginForm';
 import NewAccountForm from './identity/newAccountForm';
 
 function App() {
-  return (
-      <Routes>
-          <Route path="/login" element={<LoginForm />}></Route>
-          <Route path="/newaccount" element={<NewAccountForm />}></Route>
-      </Routes>
+    return (
+        <Routes>
+            <Route path="ms/identity/login" element={<LoginForm />}></Route>
+            <Route path="ms/identity/newaccount" element={<NewAccountForm />}></Route>
+        </Routes>                    
   );
 }
 

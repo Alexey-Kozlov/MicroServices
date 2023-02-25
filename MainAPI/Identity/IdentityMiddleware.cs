@@ -26,7 +26,7 @@ namespace MIdentity
                     return;
                 }
                 //токен есть, но если это обращение к фронту - пропускаем, для фронта контекст пользователя не нужен
-                if (!context.Request.GetDisplayUrl().Contains(_config["FrontUrl"]!))
+                if (!context.Request.GetDisplayUrl().Contains(_config["FRONT_URL"]!))
                 {
                     var token = context.Request.Headers["Authorization"].ToString().Replace("Bearer ", string.Empty);
                     try

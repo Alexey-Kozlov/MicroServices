@@ -7,9 +7,12 @@ namespace MainAPI.Services
     public class Orders : BaseService, IOrders
     {
         private readonly IConfiguration _config;
-        public Orders(IHttpClientFactory clientFactory, IConfiguration config) : base(clientFactory)
+        private readonly ILogger<Orders> _logger;
+        public Orders(IHttpClientFactory clientFactory, IConfiguration config, ILogger<Orders> logger) 
+            : base(clientFactory, logger)
         {
             _config = config;
+            _logger = logger;
         }
 
         public async Task<T> GetOrdersList<T>(string token, OrdersPageParams pageParams)

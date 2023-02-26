@@ -6,16 +6,19 @@ namespace MainAPI.Services
     public class Category : BaseService, ICategory
     {
         private readonly IConfiguration _config;
-        public Category(IHttpClientFactory clientFactory, IConfiguration config): base(clientFactory) 
+        private readonly ILogger<Category> _logger;
+        public Category(IHttpClientFactory clientFactory, IConfiguration config, ILogger<Category> logger) 
+            : base(clientFactory, logger) 
         {
             _config= config;
+            _logger= logger;
         }
         public async Task<T> GetCategoryById<T>(int id, string token)
         {
             return await SendAsync<T>(new ApiRequest()
             {
                 ApiType = ApiType.Get,
-                Url = _config["CategoryAPI"]! + "/api/category/" + id.ToString(), 
+                Url = _config["CATEGORY_API"]! + "/" + id.ToString(), 
                 Token = token
             });
         }
@@ -25,7 +28,7 @@ namespace MainAPI.Services
             return await SendAsync<T>(new ApiRequest()
             {
                 ApiType = ApiType.Get,
-                Url = _config["CategoryAPI"]! + "/api/category",
+                Url = _config["CATEGORY_API"]!,
                 Token = token
             });
         }
@@ -35,7 +38,7 @@ namespace MainAPI.Services
             return await SendAsync<T>(new ApiRequest()
             {
                 ApiType = ApiType.Post,
-                Url = _config["CategoryAPI"]! + "/api/category",
+                Url = _config["CATEGORY_API"]!,
                 Data= category,
                 Token = token
             });
@@ -46,7 +49,7 @@ namespace MainAPI.Services
             return await SendAsync<T>(new ApiRequest()
             {
                 ApiType = ApiType.Delete,
-                Url = _config["CategoryAPI"]! + "/api/category/" + id.ToString(),
+                Url = _config["CATEGORY_API"]! + "/" + id.ToString(),
                 Token = token
             });
         }

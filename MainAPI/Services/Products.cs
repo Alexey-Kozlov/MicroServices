@@ -13,12 +13,15 @@ namespace MainAPI.Services
         private readonly IConfiguration _config;
         private readonly ICategory _category;
         private readonly IMapper _mapper;
+        private readonly ILogger<Products> _logger;
         public Products(IHttpClientFactory clientFactory, IConfiguration config, 
-            ICategory category, IMapper mapper) : base(clientFactory)
+            ICategory category, IMapper mapper, ILogger<Products> logger) 
+            : base(clientFactory, logger)
         {
             _config = config;
             _category = category;
             _mapper = mapper;
+            _logger = logger;
         }
         public async Task<T> GetProductById<T>(int id, string token)
         {

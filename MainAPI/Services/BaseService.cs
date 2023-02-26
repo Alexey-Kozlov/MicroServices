@@ -11,10 +11,12 @@ namespace Services
     {
         public ResponseDTO responseModel { get; set; }
         private readonly IHttpClientFactory _httpClient;
-        public BaseService(IHttpClientFactory httpClient)
+        private readonly ILogger<BaseService> _logger;
+        public BaseService(IHttpClientFactory httpClient, ILogger<BaseService> logger)
         {
             this.responseModel = new ResponseDTO();
             _httpClient = httpClient;
+            _logger = logger;   
         }
 
         public async Task<T> SendAsync<T>(ApiRequest apiRequest)
@@ -24,7 +26,9 @@ namespace Services
                 var client = _httpClient.CreateClient("Api");
                 HttpRequestMessage message = new HttpRequestMessage();
                 message.Headers.Add("Accept", "application/json");
+                _logger.LogInformation("url1 - " + apiRequest.Url);
                 message.RequestUri = new Uri(apiRequest.Url);
+                _logger.LogInformation("url2 - " + message.RequestUri.ToString());
                 client.DefaultRequestHeaders.Clear();
 
                 if (apiRequest.Data != null)
@@ -52,8 +56,10 @@ namespace Services
                         message.Method = HttpMethod.Get;
                         break;
                 }
+                _logger.LogInformation("url - " + message.RequestUri.ToString());
                 HttpResponseMessage apiResponse = await client.SendAsync(message);
                 var apiContent = await apiResponse.Content.ReadAsStringAsync();
+                _logger.LogInformation("apiContent - " + apiContent);
                 if (apiContent.Contains("Microsoft.IdentityModel.Tokens.SecurityTokenExpiredException"))
                 {
                     throw new UnauthorizedAccessException("Невалидный токен");
@@ -67,15 +73,18 @@ namespace Services
             }
             catch (UnauthorizedAccessException ex)
             {
+                _logger.LogInformation("UnauthorizedAccessException - " + ex.Message);
                 throw new UnauthorizedAccessException("Невалидный токен", ex);
             }
-            catch (InvalidOperationException)
+            catch (InvalidOperationException ex)
             {
+                _logger.LogInformation("InvalidOperationException - " + ex.Message);
                 //кастомная ошибка без вывода стека. Если нужен стек - пишем здесь в лог.
                 throw new CustomException("Ошибка выполнения операции");
             }
             catch (Exception ex)
             {
+                _logger.LogInformation("error - " + ex.Message);
                 var dtoError = new ResponseDTO
                 {
                     Message = "Ошибка",

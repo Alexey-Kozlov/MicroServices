@@ -9,28 +9,12 @@ using System.Text;
 
 namespace MIdentity
 {
-    public class IdentityService : BaseService, IIdentityService
+    public class IdentityService : IIdentityService
     {
-        private readonly IHttpClientFactory _clientFactory;
-        private readonly IdentitySettings _identitySettings;
-        private readonly IConfiguration _config;
         private readonly IMapper _mapper;
-        public IdentityService(IHttpClientFactory clientFactory, IConfiguration config,
-            IOptions<IdentitySettings> options, IMapper mapper) : base(clientFactory)
+        public IdentityService(IMapper mapper) 
         {
-            _clientFactory = clientFactory;
-            _identitySettings = options.Value;
-            _config = config;
             _mapper = mapper;
-        }
-        public async Task<bool> CheckToken(string token)
-        {
-            return await SendAsync<bool>(new ApiRequest()
-            {
-                ApiType = ApiType.Post,
-                Data = new IdentityModel { token = token },
-                Url = _config["IdentitySettings:IdentityUrlCheckToken"]!
-            }); ;
         }
         public ClaimsPrincipal? GetPrincipal(string token)
         {
@@ -39,46 +23,23 @@ namespace MIdentity
             if (tokenObj != null)
             {
                 var model = _mapper.Map<IdentityModel>(tokenObj);
-                //здесь получаем клаймс через создание jwt-токена, тоже так можно, но 
-                //долго и ресурсозатратно, лучше сделать как в заказах и продуктах
-                var tempToken = CreateTempToken(model);
-                var symmetricKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("ТестовыйКлюч"));
-                var validationParameters = new TokenValidationParameters()
+                //эдесь получаем аутентифицированного пользователя упрощенно, из списка клаймсов
+                var claims = new List<Claim>
                 {
-                    ValidateLifetime = false,
-                    ValidateAudience = false,
-                    ValidateIssuer = false,
-                    IssuerSigningKey = symmetricKey
+                    new Claim(ClaimTypes.Name, model.UserName),
+                    new Claim(ClaimTypes.NameIdentifier, model.Id),
+                    new Claim(ClaimTypes.GivenName, model.DisplayName)
                 };
-                var identity = tokenHandler.ValidateToken(tempToken, validationParameters, out var sec);
-                return identity;
+                //назначаем роли
+                foreach (var role in model.Roles)
+                {
+                    claims.Add(new Claim(ClaimTypes.Role, role));
+                }
+                var claimIdentity = new ClaimsIdentity(claims, "SomeCustomKey");
+                var claimsPrincipal = new ClaimsPrincipal(claimIdentity);
+                return claimsPrincipal;
             }
             return null;
-        }
-
-        private string CreateTempToken(IdentityModel model)
-        {
-            var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.Name, model.UserName),
-                new Claim(ClaimTypes.NameIdentifier, model.Id),
-                new Claim(ClaimTypes.GivenName, model.DisplayName)
-            };
-            //назначаем роли
-            foreach (var role in model.Roles)
-            {
-                claims.Add(new Claim(ClaimTypes.Role, role));
-            }
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("ТестовыйКлюч"));
-            var cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(claims),
-                SigningCredentials = cred
-            };
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            return tokenHandler.WriteToken(token);
         }
     }
 }

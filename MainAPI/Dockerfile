@@ -1,15 +1,13 @@
 FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS base
 
-ENV RABBIT_PRODUCER=/ms/api/ms-rabbit-producer
-ENV FRONT_URL=/ms
-ENV PRODUCT_API=/ms/api/product
-ENV CATEGORY_API=/ms/api/category
-ENV ORDER_API=/ms/api/order
-ENV IDENTITY_LOGIN=/ms/identity
-ENV IDENTITY_TOKEN=/ms/identity/api
+ENV RABBIT_PRODUCER=http://ms-rabbit-producer-service:5021/rabbitsend
+ENV PRODUCT_API=http://ms-product-api-service:5023
+ENV CATEGORY_API=http://ms-category-api-service:5024
+ENV ORDER_API=http://ms-order-api-service:5025
+ENV IDENTITY_TOKEN=http://ms-identity-api-service:5020/ms/identity/api/CheckToken
 
 WORKDIR /app
-EXPOSE 5023
+EXPOSE 5022
 
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src

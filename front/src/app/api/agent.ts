@@ -99,38 +99,38 @@ const responseBody = <T>(response: AxiosResponse<T>) => {
 
 const Product = {
     getProducts: () => axios.get<IProduct[]>(process.env.REACT_APP_MAIN! +
-        '/api/product/getproductlist').then(responseBody),
+        '/product/getproductlist').then(responseBody),
     getProductById: (id: string) => axios.get<IProduct>(process.env.REACT_APP_MAIN! +
-        `/api/product/${id}`).then(responseBody),
+        `/product/${id}`).then(responseBody),
     addEdit: (product: IProduct) => axios.post<IProduct>(process.env.REACT_APP_MAIN! +
-        `/api/product`, { ...product }).then(responseBody),
+        `/product`, { ...product }).then(responseBody),
     delete: (id: number) => axios.delete<IProduct>(process.env.REACT_APP_MAIN! +
-        `/api/product/${id.toString()}`).then(responseBody)
+        `/product/${id.toString()}`).then(responseBody)
 
 }
 
 const Category = {
     getCategoryList: () => axios.get<ICategory[]>(process.env.REACT_APP_MAIN! +
-        '/api/category/GetCategoryList').then(responseBody),
+            '/category/GetCategoryList').then(responseBody),
     getCategoryById: (id: string) => axios.get<ICategory>(process.env.REACT_APP_MAIN! +
-        `/api/category/${id}`).then(responseBody),
+        `/category/${id}`).then(responseBody),
     addEdit: (category: ICategory) => axios.post<ICategory>(process.env.REACT_APP_MAIN! +
-        `/api/category`, { ...category }).then(responseBody),
+        `/category`, { ...category }).then(responseBody),
     delete: (id: number) => axios.delete<ICategory>(process.env.REACT_APP_MAIN! +
-        `/api/category/${id.toString()}`).then(responseBody)
+        `/category/${id.toString()}`).then(responseBody)
 }
 
 const Orders = {
     getOrdersList: (params: URLSearchParams) => {
         return axios.get<PaginatedResult<IOrder[]>>(process.env.REACT_APP_MAIN! +
-            '/api/orders/GetOrdersList', { params }).then(responseBody)
+            '/orders/GetOrdersList', { params }).then(responseBody)
     },
     getOrderById: (id: string) => axios.get<IOrder>(process.env.REACT_APP_MAIN! +
-        `/api/orders/${id}`).then(responseBody),
+        `/orders/${id}`).then(responseBody),
     addEdit: (order: IOrder) => axios.post<IOrder>(process.env.REACT_APP_MAIN! +
-        `/api/orders`, { ...order }).then(responseBody),
+        `/orders`, { ...order }).then(responseBody),
     delete: (id: number) => axios.delete<IOrder>(process.env.REACT_APP_MAIN! +
-        `/api/orders/${id.toString()}`).then(responseBody)
+        `/orders/${id.toString()}`).then(responseBody)
     }
 
 const Identity = {

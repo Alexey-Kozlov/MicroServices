@@ -3,9 +3,8 @@ using Services;
 
 namespace MIdentity
 {
-    public interface IIdentityService : IBaseServise
+    public interface IIdentityService 
     {
-        Task<bool> CheckToken(string token);
         ClaimsPrincipal? GetPrincipal(string token);
     }
 }

@@ -7,21 +7,26 @@ using Newtonsoft.Json;
 namespace MainAPI.Controllers
 {
     [Authorize]
-    [Route("api/category")]
+    [Route("ms/api/category")]
     public class CategoryController : ControllerBase
     {
         private readonly ICategory _category;
-        public CategoryController(ICategory category)
+        private readonly ILogger<CategoryController> _logger;
+        public CategoryController(ICategory category, ILogger<CategoryController> logger)
         {
-            _category= category;
+            _category = category;
+            _logger = logger;   
         }
         [HttpGet("GetCategoryList")]
         public async Task<IActionResult> GetCategoryList()
         {
+            _logger.LogInformation("GetCategoryList");
             var accessToken = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", string.Empty);
             var response = await _category.GetCategoryList<ResponseDTO>(accessToken!);
-            if(response != null && response.IsSuccess)
+            _logger.LogInformation("GetCategoryList response - " + JsonConvert.SerializeObject(response) );
+            if (response != null && response.IsSuccess)
             {
+                _logger.LogInformation("GetCategoryList response success");
                 var rez = JsonConvert.DeserializeObject<List<CategoryDTO>>(Convert.ToString(response.Result)!);
                 return Ok(rez);
             }

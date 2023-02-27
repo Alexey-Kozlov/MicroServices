@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 namespace MainAPI.Controllers
 {
     [Authorize]
-    [Route("api/product")]
+    [Route("ms/api/product")]
     public class ProductController : ControllerBase
     {
         private readonly IProducts _products;

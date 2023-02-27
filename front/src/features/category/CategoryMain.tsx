@@ -20,7 +20,7 @@ export default observer(function CategoryMain() {
     }, [getCategoryList]);
 
     const handleEditButton = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, id: number) => {
-        navigate(`/category/${id}`);
+        navigate(`${process.env.REACT_APP_FRONT}/category/${id}`);
     }
     const handleDeleteButton = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, id: number, name: string) => {
         confirmObject.id = id;
@@ -35,6 +35,8 @@ export default observer(function CategoryMain() {
             deleteCategory(confirmObj!.id);
         }
     };
+    const addCategoryLink = process.env.REACT_APP_FRONT + "/addCategory";
+
     return (
         <>
             <Container maxWidth="md" sx={{ marginTop: "50px" }}>
@@ -42,7 +44,7 @@ export default observer(function CategoryMain() {
                     <h2>Категории</h2>
                 </Stack>
                 <Stack alignItems="flex-end">
-                    <Button variant="outlined" component="a" href="/addCategory">Добавить</Button>
+                    <Button variant="outlined" component="a" href={ addCategoryLink } >Добавить</Button>
                 </Stack>
                 <TableContainer component={Paper}>
                     <Table sx={{ minWidth: 650 }}  >

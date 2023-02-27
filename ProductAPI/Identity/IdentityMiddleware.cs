@@ -26,34 +26,13 @@ namespace MIdentity
                     context.Response.StatusCode = StatusCodes.Status401Unauthorized;
                     return;
                 }
-                //токен есть, но если это обращение к фронту - пропускаем, для фронта контекст пользователя не нужен
-                if (!context.Request.GetDisplayUrl().Contains(_config["FrontUrl"]!))
+
+                var token = context.Request.Headers["Authorization"].ToString().Replace("Bearer ", string.Empty);
+                var principal = _identityService.GetPrincipal(token!);
+                if (principal != null)
                 {
-                    var token = context.Request.Headers["Authorization"].ToString().Replace("Bearer ", string.Empty);
-                    try
-                    {
-                        if (await _identityService.CheckToken(token))
-                        {
-                            var principal = _identityService.GetPrincipal(token!);
-                            if (principal != null)
-                            {                                
-                                //валидный токен, получен пользователь
-                               context.User = principal;
-                            }
-                        }
-                        else
-                        {
-                            //ошибка с токеном - не валидный
-                            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-                            return;
-                        }
-                    }
-                    catch (UnauthorizedAccessException)
-                    {
-                        //ошибка с токеном - не валидный
-                        context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-                        return;
-                    }
+                    //валидный токен, получен пользователь
+                    context.User = principal;
                 }
             }
             await next(context);

@@ -9,6 +9,7 @@ using RabbitConsumer.Domain;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System.Threading.Channels;
+using System.Linq.Expressions;
 
 namespace RabbitConsumer.Services
 {
@@ -37,7 +38,7 @@ namespace RabbitConsumer.Services
                 _connection = factory.CreateConnection();
                 _channel = _connection.CreateModel();
                 _channel.QueueDeclare(queue: _configuration.GetValue<string>("RABBIT_QUEUE_NAME"), 
-                    durable: true, 
+                    durable: false, 
                     exclusive: false, 
                     autoDelete: false, 
                     arguments: null);
@@ -45,6 +46,7 @@ namespace RabbitConsumer.Services
             catch (Exception ex)
             {
                 _logger.LogError($"RabbitConsumer error - {ex.Message}");
+                throw new Exception("Cannot run - " + ex.Message);
             }
         }
 

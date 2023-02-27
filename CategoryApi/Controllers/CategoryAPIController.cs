@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace CategoryAPI.Controllers
 {
+    [Route("/")]
     public class CategoryAPIController : ControllerBase
     {
         protected ResponseDTO _response;

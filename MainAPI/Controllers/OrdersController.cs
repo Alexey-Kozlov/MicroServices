@@ -10,7 +10,7 @@ using System.Net;
 namespace MainAPI.Controllers
 {
     [Authorize]
-    [Route("api/orders")]
+    [Route("ms/api/orders")]
     public class OrdersController : ControllerBase
     {
         private readonly IOrders _orders;

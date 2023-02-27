@@ -9,8 +9,7 @@ using OrdersAPI.Models;
 
 namespace OrdersAPI.Controllers
 {
-    [Authorize]
-    [Route("api/orders")]
+    [Route("/")]
     public class OrdersController : ControllerBase
     {
         private readonly IOrdersRepository _ordersRepository;

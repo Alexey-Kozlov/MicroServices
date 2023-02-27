@@ -20,13 +20,10 @@ namespace MainAPI.Controllers
         [HttpGet("GetCategoryList")]
         public async Task<IActionResult> GetCategoryList()
         {
-            _logger.LogInformation("GetCategoryList");
             var accessToken = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", string.Empty);
             var response = await _category.GetCategoryList<ResponseDTO>(accessToken!);
-            _logger.LogInformation("GetCategoryList response - " + JsonConvert.SerializeObject(response) );
             if (response != null && response.IsSuccess)
             {
-                _logger.LogInformation("GetCategoryList response success");
                 var rez = JsonConvert.DeserializeObject<List<CategoryDTO>>(Convert.ToString(response.Result)!);
                 return Ok(rez);
             }

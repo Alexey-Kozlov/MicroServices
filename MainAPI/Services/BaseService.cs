@@ -26,9 +26,7 @@ namespace Services
                 var client = _httpClient.CreateClient("Api");
                 HttpRequestMessage message = new HttpRequestMessage();
                 message.Headers.Add("Accept", "application/json");
-                _logger.LogInformation("url1 - " + apiRequest.Url);
                 message.RequestUri = new Uri(apiRequest.Url);
-                _logger.LogInformation("url2 - " + message.RequestUri.ToString());
                 client.DefaultRequestHeaders.Clear();
 
                 if (apiRequest.Data != null)
@@ -56,10 +54,8 @@ namespace Services
                         message.Method = HttpMethod.Get;
                         break;
                 }
-                _logger.LogInformation("url - " + message.RequestUri.ToString());
                 HttpResponseMessage apiResponse = await client.SendAsync(message);
                 var apiContent = await apiResponse.Content.ReadAsStringAsync();
-                _logger.LogInformation("apiContent - " + apiContent);
                 if (apiContent.Contains("Microsoft.IdentityModel.Tokens.SecurityTokenExpiredException"))
                 {
                     throw new UnauthorizedAccessException("Невалидный токен");

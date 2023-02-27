@@ -20,7 +20,7 @@ namespace MainAPI.Services
             return await SendAsync<T>(new ApiRequest()
             {
                 ApiType = ApiType.Get,
-                Url = _config["OrdersAPI"]! + "/api/orders",
+                Url = _config["ORDER_API"]!,
                 Data = pageParams,
                 Token = token
             });
@@ -31,7 +31,7 @@ namespace MainAPI.Services
             return await SendAsync<T>(new ApiRequest()
             {
                 ApiType = ApiType.Get,
-                Url = _config["OrdersAPI"]! + "/api/orders/" + id.ToString(),
+                Url = _config["ORDER_API"]! + "/" + id.ToString(),
                 Token = token
             });
         }
@@ -41,7 +41,7 @@ namespace MainAPI.Services
             return await SendAsync<T>(new ApiRequest()
             {
                 ApiType = ApiType.Post,
-                Url = _config["OrdersAPI"]! + "/api/orders",
+                Url = _config["ORDER_API"]!,
                 Data = order,
                 Token = token
             });
@@ -52,7 +52,7 @@ namespace MainAPI.Services
             return await SendAsync<T>(new ApiRequest()
             {
                 ApiType = ApiType.Delete,
-                Url = _config["OrdersAPI"]! + "/api/orders/" + id.ToString(),
+                Url = _config["ORDER_API"]! + "/" + id.ToString(),
                 Token = token
             });
         }

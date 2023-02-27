@@ -30,7 +30,7 @@ namespace RabbitProducer.Services
                 using (var channel = connection.CreateModel())
                 {
                     channel.QueueDeclare(queue: _configuration.GetValue<string>("RABBIT_QUEUE_NAME"),
-                                     durable: true,
+                                     durable: false,
                                      exclusive: false,
                                      autoDelete: false,
                                      arguments: null);

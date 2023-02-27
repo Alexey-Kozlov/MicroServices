@@ -1,11 +1,9 @@
 ﻿using System.Security.Claims;
-using OrdersAPI.Services;
 
 namespace MIdentity
 {
-    public interface IIdentityService : IBaseServise
+    public interface IIdentityService
     {
-        Task<bool> CheckToken(string token);
         ClaimsPrincipal? GetPrincipal(string token);
     }
 }

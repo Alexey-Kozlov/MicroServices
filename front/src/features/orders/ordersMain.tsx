@@ -1,14 +1,13 @@
 import { observer } from "mobx-react-lite";
-import { Box, Button, Container, Pagination, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TableSortLabel } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import { Button, Container, Pagination, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TableSortLabel } from "@mui/material";
+import { useEffect, useState } from "react";
 import { useStore } from "../../app/stores/store";
 import EditButtons from "../../app/components/EditButtons";
 import ConfirmDialog from "../../app/components/ConfirmDialog";
 import WaitingIndicator from "../../app/components/WaitingIndicator";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
 import PagingParams from "../../app/models/pagingParams";
-import { visuallyHidden } from '@mui/utils';
 
 export default observer(function OrdersMain() {
     const { orderStore: { ordersRegistry, getOrders, deleteOrder, isLoading, setPredicate, predicate },
@@ -32,7 +31,7 @@ export default observer(function OrdersMain() {
     const [currentPageNumber, setCurrentPageNumber] = useState<number>(1);
 
     const handleEditButton = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, id: number) => {
-        navigate(`/order/${id}`);
+        navigate(`${process.env.REACT_APP_FRONT}/order/${id}`);
     }
     const handleDeleteButton = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, id: number, name: string) => {
         confirmObject.id = id;
@@ -64,6 +63,8 @@ export default observer(function OrdersMain() {
         setCurrentPageNumber(1);
     };
 
+    const addOrderLink =  process.env.REACT_APP_FRONT + "/order";
+
     return (
         <>
             <Container maxWidth="md" sx={{ marginTop: "50px" }}>
@@ -73,7 +74,7 @@ export default observer(function OrdersMain() {
                             <h2>Заказы</h2>
                         </Stack>
                         <Stack alignItems="flex-end">
-                            <Button variant="outlined" component="a" href="/order">Добавить</Button>
+                            <Button variant="outlined" component="a" href={ addOrderLink } >Добавить</Button>
                         </Stack>
                         <TableContainer component={Paper}>
                             <Table sx={{ minWidth: 650 }}  >

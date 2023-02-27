@@ -28,7 +28,7 @@ export default observer(function CategoryForm() {
             id = "0";
         } 
         addEditCategory(new Category(Number(id), data.name)).then(() => {
-            navigate('/category');
+            navigate(`${process.env.REACT_APP_FRONT}/category`);
         })
     });
     const labelStyle = {
@@ -71,7 +71,7 @@ export default observer(function CategoryForm() {
                         <Grid2 container direction="row" justifyContent="center">
                             <Grid2>
                                 <Button variant="outlined" sx={{ marginRight: "10px" }}
-                                    onClick={() => navigate('/category')}>
+                                    onClick={() => navigate(process.env.REACT_APP_FRONT + '/category')}>
                                     Отмена
                                 </Button>
                                 <Button type="submit" variant="outlined"

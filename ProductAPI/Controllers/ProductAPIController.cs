@@ -5,8 +5,7 @@ using ProductAPI.Repository;
 
 namespace ProductAPI.Controllers
 {
-    [Authorize]
-    [Route("api/products")]
+    [Route("/")]
     public class ProductAPIController : ControllerBase
     {
         protected ResponseDTO _response;

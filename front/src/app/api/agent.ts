@@ -33,12 +33,12 @@ axios.interceptors.response.use(async response => {
         switch (status) {
             case 404:
                 if (config.method === 'get') {
-                    window.location.href='/not-found';
+                    console.log("Page not found");
                 }
                 break;
             case 401:
                 store.identityStore.clearIdentity();
-                window.location.href = '/unathorized';
+                window.location.href = process.env.REACT_APP_FRONT + '/unathorized';
                 break;
             case 500:
                 let mes = getErrorText(data, error);
@@ -149,16 +149,12 @@ const Identity = {
             if (error.response) {
                 const { status } = error.response!;
                 if (status === 401) {        
-                    window.location.href = '/unathorized';
+                    window.location.href = process.env.REACT_APP_FRONT + '/unathorized';
                 }
             }
         });
         return axInstance.get<ResponseResult<IIdentity>>(process.env.REACT_APP_IDENTITY! +
             '/CurrentUser').then(responseBody);
-    },
-
-    test: () => {
-        return axios.get<ResponseResult<object>>(process.env.REACT_APP_MAIN! + '/home/login').then(responseBody)
     },
 
     register: (user: IIdentity) => axios.post<ResponseResult<IIdentity>>(process.env.REACT_APP_IDENTITY! +
@@ -179,7 +175,7 @@ const Identity = {
                     const { status } = error.response!;
                     if (status === 401) {
                         store.identityStore.clearIdentity();
-                        window.location.href = '/unathorized';
+                        window.location.href = process.env.REACT_APP_FRONT + '/unathorized';
                     }
                 }
             });

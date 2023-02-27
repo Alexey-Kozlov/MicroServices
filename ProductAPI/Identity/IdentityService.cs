@@ -1,36 +1,18 @@
 ﻿using AutoMapper;
-using Models;
 using Services;
-using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Text;
 
 namespace MIdentity
 {
     public class IdentityService : BaseService, IIdentityService
     {
         private readonly IHttpClientFactory _clientFactory;
-        private readonly IdentitySettings _identitySettings;
-        private readonly IConfiguration _config;
         private readonly IMapper _mapper;
-        public IdentityService(IHttpClientFactory clientFactory, IConfiguration config,
-            IOptions<IdentitySettings> options, IMapper mapper) : base(clientFactory)
+        public IdentityService(IHttpClientFactory clientFactory, IMapper mapper) : base(clientFactory)
         {
             _clientFactory = clientFactory;
-            _identitySettings = options.Value;
-            _config = config;
             _mapper = mapper;
-        }
-        public async Task<bool> CheckToken(string token)
-        {
-            return await SendAsync<bool>(new ApiRequest()
-            {
-                ApiType = ApiType.Post,
-                Data = new IdentityModel { token = token },
-                Url = _config["IdentitySettings:IdentityUrlCheckToken"]!
-            }); ;
         }
         public ClaimsPrincipal? GetPrincipal(string token)
         {

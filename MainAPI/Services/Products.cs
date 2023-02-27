@@ -28,7 +28,7 @@ namespace MainAPI.Services
             return await SendAsync<T>(new ApiRequest()
             {
                 ApiType = ApiType.Get,
-                Url = _config["PRODUCT_API"]! + "/products/" + id.ToString(),
+                Url = _config["PRODUCT_API"]! + "/" + id.ToString(),
                 Token = token
             });
         }
@@ -37,7 +37,7 @@ namespace MainAPI.Services
             var productParam = new ApiRequest()
             {
                 ApiType = ApiType.Get,
-                Url = _config["PRODUCT_API"]! + "/products",
+                Url = _config["PRODUCT_API"]!,
                 Token = token
             };
             //параллельно запускаем оба потока на получение данных
@@ -78,7 +78,7 @@ namespace MainAPI.Services
             return await SendAsync<T>(new ApiRequest()
             {
                 ApiType = ApiType.Post,
-                Url = _config["PRODUCT_API"]! + "/products",
+                Url = _config["PRODUCT_API"]!,
                 Data = product,
                 Token = token
             });
@@ -89,7 +89,7 @@ namespace MainAPI.Services
             return await SendAsync<T>(new ApiRequest()
             {
                 ApiType = ApiType.Delete,
-                Url = _config["PRODUCT_API"]! + "/products/" + id.ToString(),
+                Url = _config["PRODUCT_API"]! + "/" + id.ToString(),
                 Token = token
             });
         }
@@ -105,7 +105,7 @@ namespace MainAPI.Services
             await SendAsync<T>(new ApiRequest()
             {
                 ApiType = ApiType.Post,
-                Url = _config["RABBIT_PRODUCER"]! + "/rabbitsend",
+                Url = _config["RABBIT_PRODUCER"]!,
                 Data = data!,
                 Token = token
             });

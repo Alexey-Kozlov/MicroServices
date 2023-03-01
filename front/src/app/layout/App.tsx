@@ -20,7 +20,7 @@ export default observer(function App() {
           <ToastContainer position='bottom-right' hideProgressBar />
           <Header />
           <Routes>
-              <Route path="ms">
+              <Route path={ process.env.REACT_APP_FRONT }>
                   <Route path="" element={<p>Главная</p>}></Route>
                   <Route path="unathorized" element={<UnAthorized />}></Route>
                   <Route path="products" element={<ProductMain />}></Route>

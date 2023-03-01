@@ -50,7 +50,7 @@ export default observer(function Header() {
                 <Toolbar disableGutters>
                     {isLoggedIn &&
                         <Tabs value={tabState}>
-                            <Tab label="Главная" sx={HeaderTheme.typography.tab} component={Link} to={process.env.REACT_APP_FRONT! } />
+                            <Tab label="Главная" sx={HeaderTheme.typography.tab} component={Link} to={process.env.REACT_APP_FRONT! + "/" } />
                             <Tab label="Продукты" sx={HeaderTheme.typography.tab} component={Link} to={process.env.REACT_APP_FRONT! + "/products" } />
                             <Tab label="Категории" sx={HeaderTheme.typography.tab} component={Link} to={process.env.REACT_APP_FRONT! + "/category"} />
                             <Tab label="Заказы" sx={HeaderTheme.typography.tab} component={Link} to={process.env.REACT_APP_FRONT! + "/orders"} />

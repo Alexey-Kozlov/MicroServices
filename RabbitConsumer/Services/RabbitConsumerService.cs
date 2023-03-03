@@ -37,11 +37,27 @@ namespace RabbitConsumer.Services
                 factory.Port = _configuration.GetValue<int>("RABBIT_SERVICE_PORT");
                 _connection = factory.CreateConnection();
                 _channel = _connection.CreateModel();
-                _channel.QueueDeclare(queue: _configuration.GetValue<string>("RABBIT_QUEUE_NAME"), 
+                _channel.ExchangeDeclare(
+                    exchange: _configuration.GetValue<string>("RABBIT_QUEUE_NAME"),
+                    ExchangeType.Topic
+                    );
+                _channel.QueueDeclare(
+                    queue: _configuration.GetValue<string>("RABBIT_QUEUE_NAME"), 
                     durable: false, 
                     exclusive: false, 
                     autoDelete: false, 
                     arguments: null);
+                _channel.QueueBind(
+                    queue: _configuration.GetValue<string>("RABBIT_QUEUE_NAME"),
+                    exchange: _configuration.GetValue<string>("RABBIT_QUEUE_NAME"),
+                    routingKey:  "somekey",
+                    arguments: null
+                    );
+                _channel.BasicQos(
+                    prefetchSize: 0,
+                    prefetchCount: 1,
+                    global: false
+                    );
             }
             catch (Exception ex)
             {
@@ -69,14 +85,21 @@ namespace RabbitConsumer.Services
                         var logMessage = _mapper.Map<LogMessage>(result);
                         _appDbContext.LogMessage.Add(logMessage);
                         _appDbContext.SaveChanges();
+                        _channel.BasicAck(ea.DeliveryTag, false);
                     }
                     catch (Exception ex)
                     {
                         _logger.LogInformation("Ошибка записи - " + ex.Message);
                     }
                 };
-
-                _channel.BasicConsume(_configuration.GetValue<string>("RABBIT_QUEUE_NAME"), false, consumer);
+                consumer.Shutdown += Consumer_Shutdown;
+                consumer.Registered += Consumer_Registered;
+                consumer.Unregistered += Consumer_Unregistered;
+                consumer.ConsumerCancelled += Consumer_ConsumerCancelled;
+                _channel.BasicConsume(
+                    _configuration.GetValue<string>("RABBIT_QUEUE_NAME"), 
+                    false, 
+                    consumer);
             }
             catch (Exception ex)
             {
@@ -85,7 +108,25 @@ namespace RabbitConsumer.Services
             return Task.CompletedTask;
         }
 
-       
+        private void Consumer_ConsumerCancelled(object? sender, ConsumerEventArgs e)
+        {
+            _logger.LogError($"ConsumerCancelled - {e.ConsumerTags}");
+        }
+
+        private void Consumer_Unregistered(object? sender, ConsumerEventArgs e)
+        {
+            _logger.LogError($"Unregistered - {e.ConsumerTags}");
+        }
+
+        private void Consumer_Registered(object? sender, ConsumerEventArgs e)
+        {
+            _logger.LogError($"Registered - {e.ConsumerTags}");
+        }
+
+        private void Consumer_Shutdown(object? sender, ShutdownEventArgs e)
+        {
+            _logger.LogError($"Shutdown - {e.Cause}");
+        }
 
         public override void Dispose()
         {

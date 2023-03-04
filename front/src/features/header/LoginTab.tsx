@@ -38,7 +38,7 @@ export default observer(function LoginTab({ theme }: prop) {
 
     const handleLogout = () => {
         store.identityStore.logout()
-            .then(() => navigate(process.env.REACT_APP_FRONT!))
+            .then(() => navigate(process.env.REACT_APP_FRONT! + "/"))
             .catch(error => alert(error));
     }
     const getActiveTab = () => {

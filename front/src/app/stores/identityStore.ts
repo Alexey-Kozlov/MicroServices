@@ -62,12 +62,12 @@ export default class IdentityStore {
         if (this.refreshTokenTimeout) {
             this.stopRefreshTokenTimer();
         }
-        //store.commonStore.setToken(identity.token);
         const token = JSON.parse(atob(identity.token.split('.')[1]));
         const expires = new Date(token.exp * 1000);
         let timeOut = 0;
         //если параметр REACT_APP_BREAK_INACTIVITY == true - означает прервать сессию после истечения срока действия токена и послать на логин
         //если параметр REACT_APP_BREAK_INACTIVITY != true - означает за 30 сек.дл истечения срока действия токена послать запрос на его обновление
+        //console.log("REACT_APP_BREAK_INACTIVITY - " + env.REACT_APP_BREAK_INACTIVITY);
         if (process.env.REACT_APP_BREAK_INACTIVITY === 'true') {
             timeOut = expires.getTime() - Date.now() + (5 * 1000); //начать проверять токен через 5 секунд после его истечения
         } else {

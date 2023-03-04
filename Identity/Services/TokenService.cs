@@ -39,12 +39,25 @@ namespace Identity.Services
             }
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["TokenKey"]));
             var cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
+            var expires = DateTime.Now;
+            if (double.Parse(_config["TOKEN_EXPIRES_MINUTES"]) != 0)
+            {
+                expires = DateTime.UtcNow.AddMinutes(double.Parse(_config["TOKEN_EXPIRES_MINUTES"]));
+            }
+            if (double.Parse(_config["TOKEN_EXPIRES_HOURS"]) != 0)
+            {
+                expires = DateTime.UtcNow.AddHours(double.Parse(_config["TOKEN_EXPIRES_HOURS"]));
+            }
+            if(double.Parse(_config["TOKEN_EXPIRES_MINUTES"]) == 0 &&
+                double.Parse(_config["TOKEN_EXPIRES_HOURS"]) == 0)
+            {
+                //если не указан ни один из параметров - ставим время жизни токера - 1 неделя
+                expires = DateTime.UtcNow.AddDays(7);
+            }
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = Double.Parse(_config["TokenExpiresHours"]) == 0 ? 
-                    DateTime.UtcNow.AddMinutes(Double.Parse(_config["TokenExpiresMinutes"])) :
-                    DateTime.UtcNow.AddHours(Double.Parse(_config["TokenExpiresHours"])),
+                Expires = expires,
                 SigningCredentials = cred
             };
 

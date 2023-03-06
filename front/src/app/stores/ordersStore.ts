@@ -65,6 +65,7 @@ export default class OrdersStore {
         this.setIsLoading(true);
         this.ordersRegistry.clear();
         try {
+            store.identityStore.refreshToken();
             const data = await agent.Orders.getOrdersList(this.pageParams);
             runInAction(() => {
                 data && data.Items.forEach(order => {
@@ -83,6 +84,7 @@ export default class OrdersStore {
     public getOrder = async (id: string) => {
         this.setIsLoading(true);
         try {
+            store.identityStore.refreshToken();
             if (!id) {
                 return undefined;
             }
@@ -109,6 +111,7 @@ export default class OrdersStore {
     public addEditOrder = async (order: IOrder) => {
         this.setIsLoading(true);
         try {
+            store.identityStore.refreshToken();
             const data = await agent.Orders.addEdit(order);
             runInAction(() => {
                 data && this.ordersRegistry.set(data.id, data);
@@ -125,6 +128,7 @@ export default class OrdersStore {
     public deleteOrder = async (id: number) => {
         this.setIsLoading(true);
         try {
+            store.identityStore.refreshToken();
             await agent.Orders.delete(id);
             runInAction(() => {
                 this.ordersRegistry.delete(id);

@@ -1,6 +1,7 @@
 import { ICategory } from '../models/icategory';
 import { makeAutoObservable, runInAction } from 'mobx';
 import agent from '../api/agent';
+import { store } from './store';
 
 export default class CategoryStore{
     categoryRegistry = new Map<number, ICategory>();
@@ -20,6 +21,7 @@ export default class CategoryStore{
     public getCategoryList = async () => {
         this.setIsLoading(true);
         try {
+            store.identityStore.refreshToken();
             const data = await agent.Category.getCategoryList();
             runInAction(() => {
                 data && data.forEach(category => {
@@ -35,6 +37,7 @@ export default class CategoryStore{
     public getCategoryById = async (id: string) => {
         this.setIsLoading(true);
         try {
+            store.identityStore.refreshToken();
             const category = await agent.Category.getCategoryById(id)
             runInAction(() => {
                 category && this.categoryRegistry.set(category.id, category);
@@ -49,6 +52,7 @@ export default class CategoryStore{
     public addEditCategory = async (category: ICategory) => {
         this.setIsLoading(true);
         try {
+            store.identityStore.refreshToken();
             const data = await agent.Category.addEdit(category);
             runInAction(() => {
                data &&  this.categoryRegistry.set(data.id, data);
@@ -62,6 +66,7 @@ export default class CategoryStore{
     public deleteCategory = async (id: number) => {
         this.setIsLoading(true);
         try {
+            store.identityStore.refreshToken();
             await agent.Category.delete(id);
             runInAction(() => {
                 this.categoryRegistry.delete(id);

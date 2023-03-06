@@ -62,7 +62,6 @@ export default class IdentityStore {
         if (this.refreshTokenTimeout) {
             this.stopRefreshTokenTimer();
         }
-        //store.commonStore.setToken(identity.token);
         const token = JSON.parse(atob(identity.token.split('.')[1]));
         const expires = new Date(token.exp * 1000);
         let timeOut = 0;

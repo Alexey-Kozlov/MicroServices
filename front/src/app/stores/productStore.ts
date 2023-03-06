@@ -3,6 +3,7 @@ import { makeAutoObservable, reaction, runInAction } from 'mobx';
 import agent from '../api/agent';
 import { IOrder } from '../models/iorder';
 import { IProductItems } from '../models/iproductItems';
+import { store } from './store';
 
 export default class ProductStore {
     productRegistry = new Map<number, IProduct>();
@@ -31,6 +32,7 @@ export default class ProductStore {
     public getProducts = async () => {
         this.setIsLoading(true);
         try {
+            store.identityStore.refreshToken();
             const data = await agent.Product.getProducts();
             runInAction(() => {
                 data && data.forEach(product => {
@@ -47,6 +49,7 @@ export default class ProductStore {
     public getProduct = async (productId?: string) => {
         this.setIsLoading(true);
         try {
+            store.identityStore.refreshToken();
             let data = this.productRegistry.get(Number.parseInt(productId!));
             if (!data) {
                 data = await agent.Product.getProductById(productId!) || undefined;
@@ -118,6 +121,7 @@ export default class ProductStore {
     public addEditProduct = async (product: IProduct) => {
         this.setIsLoading(true);
         try {
+            store.identityStore.refreshToken();
             const data = await agent.Product.addEdit(product);
             runInAction(() => {
                 data && this.productRegistry.set(data.id, data);
@@ -133,6 +137,7 @@ export default class ProductStore {
     public deleteProduct = async (id: number) => {
         this.setIsLoading(true);
         try {
+            store.identityStore.refreshToken();
             await agent.Product.delete(id);
             runInAction(() => {
                 this.productRegistry.delete(id);

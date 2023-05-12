@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using RabbitConsumer.Persistance;
 using RabbitConsumer.Services;
 using RabbitConsumer;
@@ -12,6 +12,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 });
 builder.Services.AddHostedService<RabbitConsumerService>();
 builder.Services.AddAutoMapper(typeof(Mapping));
+//сервис для синхронизации при записи в БД
+//builder.Services.AddSingleton<ISaveDb, SaveDb>();
 
 var app = builder.Build();
 app.Run();

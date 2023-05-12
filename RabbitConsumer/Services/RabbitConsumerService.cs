@@ -21,13 +21,17 @@ namespace RabbitConsumer.Services
         private readonly IConfiguration _configuration;
         private readonly ILogger<RabbitConsumerService> _logger;
         private readonly IMapper _mapper;
+        //private readonly ISaveDb _saveDb;
         public RabbitConsumerService(IConfiguration configuration,
-            ILogger<RabbitConsumerService> logger, AppDbContext appDbContext, IMapper mapper)
+            ILogger<RabbitConsumerService> logger, AppDbContext appDbContext, IMapper mapper
+            //ISaveDb saveDb
+            )
         {
             _appDbContext= appDbContext;
             _configuration = configuration; 
             _mapper = mapper;
             _logger = logger;
+            //_saveDb = saveDb;
             try
             {
                 _logger.LogInformation("Init rabbit consuner service");
@@ -85,6 +89,8 @@ namespace RabbitConsumer.Services
                         var logMessage = _mapper.Map<LogMessage>(result);
                         _appDbContext.LogMessage.Add(logMessage);
                         _appDbContext.SaveChanges();
+                        //образец кода для синхронизации записи в БД через семафор
+                        //await _saveDb.SaveMessage(result!);
                         _channel.BasicAck(ea.DeliveryTag, false);
                     }
                     catch (Exception ex)

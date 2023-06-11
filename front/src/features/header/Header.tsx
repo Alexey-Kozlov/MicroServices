@@ -22,7 +22,7 @@ export default observer(function Header() {
         const getActiveTab = (url: string) => {
             currentMenu.tabNumber = 0;
             switch (url.toLowerCase()) {
-                case process.env.REACT_APP_FRONT:
+                case process.env.REACT_APP_FRONT + "/":
                     currentMenu.tabNumber = 0;
                     break;
                 case checkUrl(process.env.REACT_APP_FRONT + "/product"):

@@ -48,7 +48,7 @@ export default function NewAccountForm() {
 
     const handleClose = () => {
         setOpen(false);
-        window.location.href = process.env.REACT_APP_FRONT!;
+        window.location.href = process.env.REACT_APP_FRONT! + "/";
     }
     const modalStyle = {
         position: 'absolute' as 'absolute',

@@ -27,7 +27,7 @@ export default function LoginForm() {
         const returnUrl = searchParams.get('ReturnUrl');
         agent.Identity.login(data)
             .then((identity) => {
-                let url = process.env.REACT_APP_FRONT! + '/token?token=' + identity.result.token;
+                let url = '/token?token=' + identity.result.token;
                 if (returnUrl) {
                     url = url + '&ReturnUrl=' + returnUrl;
                 }
@@ -48,7 +48,7 @@ export default function LoginForm() {
 
     const handleClose = () => {
         setOpen(false);
-        window.location.href = process.env.REACT_APP_FRONT! + "/";
+        window.location.href = "/";
     }
     const modalStyle = {
         position: 'absolute' as 'absolute',

@@ -42,7 +42,7 @@ export default observer(function OrderForm() {
         });
         addEditOrder(new Order(Number(id), data.orderDate, data.userId, data.description, data.products))
             .then(() =>{
-                navigate(process.env.REACT_APP_FRONT + '/orders');
+                navigate('/orders');
             });
     });
     const labelStyle = {
@@ -137,7 +137,7 @@ export default observer(function OrderForm() {
                                 <Grid2>
                                     <Button variant="outlined"
                                         sx={{ marginRight: "10px" }}
-                                            onClick={() => navigate(process.env.REACT_APP_FRONT + '/orders')}>
+                                            onClick={() => navigate('/orders')}>
                                         Отмена
                                     </Button>
                                     <Button type="submit" variant="outlined"

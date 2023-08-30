@@ -73,6 +73,14 @@ return PhysicalFile(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "in
 Создание образа api
 docker build -f D:\Projects\MicroServices\Identity\Dockerfile -t kozlovas/ms-identity-api D:\Projects\MicroServices
 
+Для Linux:
+docker build -f ~/Documents/Projects/MicroServices/Identity/Dockerfile -t kozlovas/ms-identity-api ~/Documents/Projects/MicroServices
+
+
+
 Cоздание образа фронта
 docker build -f D:\Projects\MicroServices\Identity\client-app\Dockerfile -t kozlovas/ms-identity-front D:\Projects\MicroServices\Identity\client-app
+
+Для Linux:
+docker build -f ~/Documents/Projects/MicroServices/Identity/client-app/Dockerfile -t kozlovas/ms-identity-front ~/Documents/Projects/MicroServices/Identity/client-app
 

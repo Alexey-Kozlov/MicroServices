@@ -40,7 +40,7 @@ export default observer(function ProductForm() {
         }
         addEditProduct(new Product(Number(id), data.name, data.price, data.description, data.categoryId, data.categoryName, data.imageId))
             .then(() =>{
-                navigate(process.env.REACT_APP_FRONT + '/products');
+                navigate('/products');
             });
     });
     const labelStyle = {
@@ -216,7 +216,7 @@ export default observer(function ProductForm() {
                             <Grid2 container direction="row" justifyContent="center">
                                 <Grid2>
                                     <Button variant="outlined" sx={{ marginRight: "10px" }}
-                                        onClick={() => navigate(process.env.REACT_APP_FRONT + '/products')}>
+                                        onClick={() => navigate('/products')}>
                                     Отмена
                                     </Button>
                                     <Button type="submit" variant="outlined"

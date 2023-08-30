@@ -31,7 +31,7 @@ export default observer(function OrdersMain() {
     const [currentPageNumber, setCurrentPageNumber] = useState<number>(1);
 
     const handleEditButton = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, id: number) => {
-        navigate(`${process.env.REACT_APP_FRONT}/order/${id}`);
+        navigate(`/order/${id}`);
     }
     const handleDeleteButton = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, id: number, name: string) => {
         confirmObject.id = id;
@@ -63,7 +63,7 @@ export default observer(function OrdersMain() {
         setCurrentPageNumber(1);
     };
 
-    const addOrderLink =  process.env.REACT_APP_FRONT + "/order";
+    const addOrderLink = "/order";
 
     return (
         <>

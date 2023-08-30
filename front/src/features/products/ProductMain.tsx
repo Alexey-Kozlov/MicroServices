@@ -22,7 +22,7 @@ export default observer(function ProductMain() {
     const [confirmObj, setConfirmObj] = useState<typeof confirmObject>(confirmObject);
 
     const handleEditButton = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, id: number) => {
-        navigate(`${process.env.REACT_APP_FRONT}/product/${id}`);
+        navigate(`/product/${id}`);
     }
     const handleDeleteButton = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, id: number, name: string) => {
         confirmObject.id = id;
@@ -37,7 +37,7 @@ export default observer(function ProductMain() {
             deleteProduct(confirmObj!.id);
         }        
     };
-    const addProductLink = process.env.REACT_APP_FRONT + "/product";
+    const addProductLink = "/product";
 
     return (
         <>

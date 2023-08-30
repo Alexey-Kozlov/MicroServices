@@ -13,7 +13,7 @@ export default function GetToken() {
         if (token) {
             store.commonStore.setToken(token);
             store.identityStore.getIdentity().then(() => {
-                let url = process.env.REACT_APP_FRONT! + "/";
+                let url = "/";
                 if (retUrl) {
                     url = url + retUrl;
                 }

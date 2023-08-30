@@ -20,7 +20,7 @@ export default observer(function CategoryMain() {
     }, [getCategoryList]);
 
     const handleEditButton = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, id: number) => {
-        navigate(`${process.env.REACT_APP_FRONT}/category/${id}`);
+        navigate(`/category/${id}`);
     }
     const handleDeleteButton = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, id: number, name: string) => {
         confirmObject.id = id;
@@ -35,7 +35,7 @@ export default observer(function CategoryMain() {
             deleteCategory(confirmObj!.id);
         }
     };
-    const addCategoryLink = process.env.REACT_APP_FRONT + "/addCategory";
+    const addCategoryLink = "/addCategory";
 
     return (
         <>

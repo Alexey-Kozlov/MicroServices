@@ -10,7 +10,7 @@ using System.Security.Claims;
 
 namespace Identity.Controllers
 {
-    [Route("ms/identity/api")]
+    [Route("identity/api")]
     public class IdentityController : ControllerBase
     {
         private readonly UserManager<ApplicationUser> _userManager;

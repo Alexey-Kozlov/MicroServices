@@ -6,8 +6,8 @@ import NewAccountForm from './identity/newAccountForm';
 function App() {
     return (
         <Routes>
-            <Route path="ms/identity/login" element={<LoginForm />}></Route>
-            <Route path="ms/identity/newaccount" element={<NewAccountForm />}></Route>
+            <Route path="identity/login" element={<LoginForm />}></Route>
+            <Route path="identity/newaccount" element={<NewAccountForm />}></Route>
         </Routes>                    
   );
 }

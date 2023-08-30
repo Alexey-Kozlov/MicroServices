@@ -22,17 +22,17 @@ export default observer(function Header() {
         const getActiveTab = (url: string) => {
             currentMenu.tabNumber = 0;
             switch (url.toLowerCase()) {
-                case process.env.REACT_APP_FRONT + "/":
+                case "/":
                     currentMenu.tabNumber = 0;
                     break;
-                case checkUrl(process.env.REACT_APP_FRONT + "/product"):
+                case checkUrl("/product"):
                     currentMenu.tabNumber = 1;
                     break;
-                case checkUrl(process.env.REACT_APP_FRONT + "/category"):
-                case checkUrl(process.env.REACT_APP_FRONT + "/addCategory"):
+                case checkUrl("/category"):
+                case checkUrl("/addCategory"):
                     currentMenu.tabNumber = 2;
                     break;
-                case checkUrl(process.env.REACT_APP_FRONT + "/order"):
+                case checkUrl("/order"):
                     currentMenu.tabNumber = 3;
                     break;
             }
@@ -50,10 +50,10 @@ export default observer(function Header() {
                 <Toolbar disableGutters>
                     {isLoggedIn &&
                         <Tabs value={tabState}>
-                            <Tab label="Главная" sx={HeaderTheme.typography.tab} component={Link} to={process.env.REACT_APP_FRONT! + "/" } />
-                            <Tab label="Продукты" sx={HeaderTheme.typography.tab} component={Link} to={process.env.REACT_APP_FRONT! + "/products" } />
-                            <Tab label="Категории" sx={HeaderTheme.typography.tab} component={Link} to={process.env.REACT_APP_FRONT! + "/category"} />
-                            <Tab label="Заказы" sx={HeaderTheme.typography.tab} component={Link} to={process.env.REACT_APP_FRONT! + "/orders"} />
+                            <Tab label="Главная" sx={HeaderTheme.typography.tab} component={Link} to={ "/" } />
+                            <Tab label="Продукты" sx={HeaderTheme.typography.tab} component={Link} to={"/products" } />
+                            <Tab label="Категории" sx={HeaderTheme.typography.tab} component={Link} to={"/category"} />
+                            <Tab label="Заказы" sx={HeaderTheme.typography.tab} component={Link} to={"/orders"} />
                         </Tabs>
                     }
                     <LoginTab theme={HeaderTheme.typography.tab } />

@@ -38,7 +38,7 @@ axios.interceptors.response.use(async response => {
                 break;
             case 401:
                 store.identityStore.clearIdentity();
-                window.location.href = process.env.REACT_APP_FRONT + '/unathorized';
+                window.location.href = '/unathorized';
                 break;
             case 500:
                 let mes = getErrorText(data, error);
@@ -149,7 +149,7 @@ const Identity = {
             if (error.response) {
                 const { status } = error.response!;
                 if (status === 401) {        
-                    window.location.href = process.env.REACT_APP_FRONT + '/unathorized';
+                    window.location.href = '/unathorized';
                 }
             }
         });
@@ -175,7 +175,7 @@ const Identity = {
                     const { status } = error.response!;
                     if (status === 401) {
                         store.identityStore.clearIdentity();
-                        window.location.href = process.env.REACT_APP_FRONT + '/unathorized';
+                        window.location.href = '/unathorized';
                     }
                 }
             });

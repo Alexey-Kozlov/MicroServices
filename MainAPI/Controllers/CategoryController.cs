@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 namespace MainAPI.Controllers
 {
     [Authorize]
-    [Route("ms/api/category")]
+    [Route("api/category")]
     public class CategoryController : ControllerBase
     {
         private readonly ICategory _category;

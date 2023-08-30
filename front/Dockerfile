@@ -1,9 +1,8 @@
 FROM node:18-alpine as builder
 
-ENV REACT_APP_IDENTITY=/ms/identity/api
-ENV REACT_APP_LOGIN=/ms/identity
-ENV REACT_APP_FRONT=/ms
-ENV REACT_APP_MAIN=/ms/api
+ENV REACT_APP_IDENTITY=/identity/api
+ENV REACT_APP_LOGIN=/identity
+ENV REACT_APP_MAIN=/api
 ENV REACT_APP_TOKEN_NAME=msjwt
 ENV REACT_APP_BREAK_INACTIVITY=false
 

@@ -4,7 +4,7 @@ ENV RABBIT_PRODUCER=http://ms-rabbit-producer-service:5021/rabbitsend
 ENV PRODUCT_API=http://ms-product-api-service:5023
 ENV CATEGORY_API=http://ms-category-api-service:5024
 ENV ORDER_API=http://ms-order-api-service:5025
-ENV IDENTITY_TOKEN=http://ms-identity-api-service:5020/ms/identity/api/CheckToken
+ENV IDENTITY_TOKEN=http://ms-identity-api-service:5020/identity/api/CheckToken
 
 WORKDIR /app
 EXPOSE 5022

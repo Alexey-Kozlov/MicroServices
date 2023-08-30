@@ -1,6 +1,5 @@
 FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS base
-ENV FRONT_URL=/ms
-ENV IDENTITY_TOKEN=http://ms-identity-api-service:5020/ms/identity/api/CheckToken
+ENV IDENTITY_TOKEN=http://ms-identity-api-service:5020/identity/api/CheckToken
 
 ENV RABBIT_SERVICE_NAME=rabbitmq-cluster-ip-service
 ENV RABBIT_QUEUE_NAME=MServices

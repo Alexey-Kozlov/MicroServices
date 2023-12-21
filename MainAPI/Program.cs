@@ -71,7 +71,7 @@ app.UseCors("CorsPolicy");
 //здесь кастомная аутентификация и авторизация через identity
 app.UseMiddleware<IdentityMiddleware>();
 app.UseRouting();
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 

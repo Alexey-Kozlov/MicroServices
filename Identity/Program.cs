@@ -5,7 +5,6 @@ using Identity.Helpers;
 using Identity.Models;
 using Identity.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -113,7 +112,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI(p => p.SwaggerEndpoint("/swagger/v1/swagger.json", "v1"));
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 app.UseDefaultFiles();
 app.UseStaticFiles();
 

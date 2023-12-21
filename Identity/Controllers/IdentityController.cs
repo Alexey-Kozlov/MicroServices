@@ -91,8 +91,11 @@ namespace Identity.Controllers
             var user = await _userManager.Users.FirstOrDefaultAsync(p => p.UserName == User.FindFirstValue(ClaimTypes.Name));
             if (user == null) return Unauthorized();
             _response.Result = await _userHelper.CreateUserDTO(user);
-            await _brokerService.SendToLog(_response, "RefreshToken", 
-                ((UserDTO)_response.Result).Token);
+            try
+            {
+                await _brokerService.SendToLog(_response, "RefreshToken", ((UserDTO)_response.Result).Token);
+            }
+            catch{}
             return Ok(_response);
         }
 

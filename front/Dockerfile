@@ -8,11 +8,11 @@ ENV REACT_APP_BREAK_INACTIVITY=false
 
 WORKDIR /app
 
-COPY package.json .
+COPY ./front/package.json .
 
 RUN npm install
 
-COPY . .
+COPY ./front .
 
 RUN npm run build
 
@@ -23,4 +23,4 @@ RUN apt update \
 
 COPY --from=builder /app/build /usr/share/nginx/html
 
-COPY default.conf /etc/nginx/conf.d/
+COPY ./front/default.conf /etc/nginx/conf.d/

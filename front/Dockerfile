@@ -1,4 +1,4 @@
-FROM node:18-alpine as builder
+FROM node:18-alpine AS builder
 
 ENV REACT_APP_IDENTITY=/identity/api
 ENV REACT_APP_LOGIN=/identity
